@@ -11,10 +11,7 @@ export default async function BoardLayout({ children }: LayoutProps<"/admin">) {
         <nav className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-4 text-sm">
           <Link href="/admin" className="flex items-center gap-3">
             <Crest size={36} />
-            <span>
-              <span className="block text-[10px] uppercase tracking-[0.25em] text-gold">SOM Cocktail Club</span>
-              <span className="display block text-xl leading-none">Board</span>
-            </span>
+            <span className="display text-2xl leading-none">SOM Cocktail Club</span>
           </Link>
           <Link href="/admin" className="text-cream/75 hover:text-cream">Events</Link>
           <Link href="/admin/board" className="text-cream/75 hover:text-cream">Leads</Link>
