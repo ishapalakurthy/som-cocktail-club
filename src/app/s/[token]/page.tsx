@@ -50,11 +50,9 @@ export default async function StatusPage(props: PageProps<"/s/[token]">) {
           venmoHandle={event.venmo_handle.replace(/^@/, "")}
           zelleInfo={event.zelle_info}
           eventName={event.name}
+          eventSlug={event.slug}
           eventOver={event.starts_at.getTime() < requestTime()}
         />
-        <Link href={`/e/${event.slug}`} className="mt-8 block text-center text-sm text-navy underline-offset-4 hover:underline">
-          See who&apos;s coming
-        </Link>
       </div>
     </main>
   );

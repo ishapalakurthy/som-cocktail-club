@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import { formatPrice } from "@/lib/format";
 import { formatDateTime, PAYMENT_WINDOW_MS } from "@/lib/time";
@@ -19,6 +20,7 @@ export default function StatusLive(props: {
   venmoHandle: string;
   zelleInfo: string;
   eventName: string;
+  eventSlug: string;
   eventOver: boolean;
 }) {
   const [s, setS] = useState(props.initial);
@@ -108,10 +110,10 @@ export default function StatusLive(props: {
         </section>
       )}
 
-      {s.status !== "removed" && !props.eventOver && (
-        <div className="pt-2 text-center">
+      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-2 text-sm">
+        {s.status !== "removed" && !props.eventOver && (
           <button
-            className="text-sm font-bold text-wine underline underline-offset-4 hover:text-ink"
+            className="font-bold text-wine underline underline-offset-4 hover:text-ink"
             disabled={pending}
             onClick={() => {
               const msg =
@@ -126,8 +128,11 @@ export default function StatusLive(props: {
           >
             {pending ? "Removing…" : s.status === "confirmed" ? "Give up my spot" : "Leave the waitlist"}
           </button>
-        </div>
-      )}
+        )}
+        <Link href={`/e/${props.eventSlug}`} className="text-navy underline underline-offset-4 hover:text-ink">
+          See who&apos;s coming
+        </Link>
+      </div>
     </div>
   );
 }
