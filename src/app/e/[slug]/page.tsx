@@ -1,15 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
+import { formatPrice } from "@/lib/format";
 import { getEventBySlug, getLiveRoster } from "@/lib/signups";
 import { formatDateTime, requestTime } from "@/lib/time";
 import { MenuHeader } from "../../_components/Crest";
 import EventLive from "./EventLive";
-
-// "$20" for whole dollars, "$12.50" otherwise.
-function formatPrice(cents: number) {
-  return `$${cents % 100 === 0 ? cents / 100 : (cents / 100).toFixed(2)}`;
-}
 
 export async function generateMetadata(props: PageProps<"/e/[slug]">) {
   const { slug } = await props.params;

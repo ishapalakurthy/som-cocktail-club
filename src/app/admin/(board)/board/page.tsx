@@ -17,7 +17,7 @@ export default async function BoardPage() {
 
   return (
     <>
-      <h1 className="display text-4xl">Leads</h1>
+      <h1 className="display text-4xl font-semibold">Leads</h1>
       <p className="mt-1 text-sm text-ink/65">
         Everyone on this list has admin access: they sign in with their Yale email and password, manage events and
         rosters, and add or remove leads. No other email can sign in.

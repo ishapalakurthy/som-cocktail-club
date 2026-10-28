@@ -11,7 +11,7 @@ export default async function LoginPage() {
     <main className="mx-auto w-full max-w-md px-3 py-10 sm:py-16">
       <div className="sheet">
         <MenuHeader />
-        <h1 className="display mt-3 text-center text-4xl">Board login</h1>
+        <h1 className="display mt-3 text-center text-4xl font-semibold">Board login</h1>
         <LoginForm />
       </div>
     </main>

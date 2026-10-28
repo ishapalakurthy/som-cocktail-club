@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { sql, type EventRow } from "@/lib/db";
+import { formatPrice } from "@/lib/format";
 import { formatDateTime } from "@/lib/time";
 
 export const metadata = { title: "Events · Cocktail Club Board" };
@@ -22,7 +23,7 @@ export default async function AdminHome(props: PageProps<"/admin">) {
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="display text-4xl">{showArchived ? "Archived events" : "Events"}</h1>
+        <h1 className="display text-4xl font-semibold">{showArchived ? "Archived events" : "Events"}</h1>
         <Link href="/admin/events/new" className="btn-primary">+ New event</Link>
       </div>
       <div className="mt-6 grid gap-3">
@@ -32,8 +33,9 @@ export default async function AdminHome(props: PageProps<"/admin">) {
           return (
             <Link key={e.id} href={`/admin/events/${e.id}`} className="card flex flex-wrap items-center gap-x-8 gap-y-2 hover:border-gold">
               <div className="min-w-56 flex-1">
-                <div className="display text-2xl">{e.name}</div>
-                <div className="text-sm text-ink/65">{formatDateTime(e.starts_at)}</div>
+                <div className="display text-2xl font-semibold">{e.name}</div>
+                <div className="text-sm font-medium">{formatDateTime(e.starts_at)} / {formatPrice(e.price_cents)}</div>
+                <div className="text-sm text-ink/65">📍 {e.location}</div>
               </div>
               <Stat label="1st Years" value={`${e.confirmed_first}/${e.cap_first}`} />
               <Stat label="2nd Years" value={`${e.confirmed_second}/${e.cap_second}`} />

@@ -5,7 +5,7 @@ export const metadata = { title: "New event · Cocktail Club Board" };
 export default function NewEventPage() {
   return (
     <>
-      <h1 className="display mb-4 text-4xl">New event</h1>
+      <h1 className="display mb-4 text-4xl font-semibold">New event</h1>
       <EventForm
         eventId={null}
         initial={{

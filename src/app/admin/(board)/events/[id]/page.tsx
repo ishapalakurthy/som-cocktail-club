@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GROUPS, GROUP_KEYS, categoryLabel } from "@/lib/categories";
+import { formatPrice } from "@/lib/format";
 import { sql, type GroupKey, type SignupRow } from "@/lib/db";
 import { capacity, getEventById } from "@/lib/signups";
 import { formatDateTime, formatDuration, formatTime, PAYMENT_WINDOW_MS, requestTime } from "@/lib/time";
@@ -32,11 +33,11 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
       <Link href="/admin" className="text-sm text-ink/55 hover:underline">← All events</Link>
       <div className="mt-2 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="display text-4xl">{event.name}</h1>
-          <div className="text-sm text-ink/65">
-            {formatDateTime(event.starts_at)}
-            {event.location && ` · ${event.location}`}
+          <h1 className="display text-4xl font-semibold">{event.name}</h1>
+          <div className="mt-1 font-medium">
+            {formatDateTime(event.starts_at)} / {formatPrice(event.price_cents)}
           </div>
+          <div className="text-sm text-ink/65">📍 {event.location}</div>
           <div className="mt-1 text-sm">
             {opensIn > 0 ? (
               <span className="text-gold-deep">Signups unlock {formatDateTime(event.opens_at)} (in {formatDuration(opensIn)})</span>

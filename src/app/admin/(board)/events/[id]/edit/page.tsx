@@ -11,7 +11,7 @@ export default async function EditEventPage(props: PageProps<"/admin/events/[id]
   return (
     <>
       <Link href={`/admin/events/${e.id}`} className="text-sm text-ink/55 hover:underline">← Back to roster</Link>
-      <h1 className="display mb-4 mt-2 text-4xl">Edit {e.name}</h1>
+      <h1 className="display mb-4 mt-2 text-4xl font-semibold">Edit {e.name}</h1>
       <EventForm
         eventId={e.id}
         initial={{
