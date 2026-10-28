@@ -17,7 +17,7 @@ export default function LoginForm() {
       </div>
       {state.error && <p className="text-sm text-wine">{state.error}</p>}
       <button className="btn-primary w-full" disabled={pending}>{pending ? "Signing in…" : "Sign in"}</button>
-      <p className="text-xs text-ink/55">Only emails on the board list can sign in.</p>
+      <p className="text-xs text-ink/55">Only emails on the leads list can sign in.</p>
     </form>
   );
 }

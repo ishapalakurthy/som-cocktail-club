@@ -17,7 +17,7 @@ export default async function BoardLayout({ children }: LayoutProps<"/admin">) {
             </span>
           </Link>
           <Link href="/admin" className="text-cream/75 hover:text-cream">Events</Link>
-          <Link href="/admin/board" className="text-cream/75 hover:text-cream">Board members</Link>
+          <Link href="/admin/board" className="text-cream/75 hover:text-cream">Leads</Link>
           <span className="ml-auto text-cream/60">{admin.name}</span>
           <form action={logout}>
             <button className="text-cream/60 hover:text-cream">Log out</button>

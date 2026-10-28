@@ -7,7 +7,7 @@ import AddBoardMember from "./AddBoardMember";
 import ChangePassword from "./ChangePassword";
 import ResetPasswordButton from "./ResetPasswordButton";
 
-export const metadata = { title: "Board members · Cocktail Club Board" };
+export const metadata = { title: "Leads · SOM Cocktail Club Board" };
 
 type Member = { id: string; name: string; email: string; added_by: string | null; created_at: Date };
 
@@ -17,10 +17,10 @@ export default async function BoardPage() {
 
   return (
     <>
-      <h1 className="display text-4xl">Board members</h1>
+      <h1 className="display text-4xl">Leads</h1>
       <p className="mt-1 text-sm text-ink/65">
         Everyone on this list has admin access: they sign in with their Yale email and password, manage events and
-        rosters, and add or remove board members. No other email can sign in.
+        rosters, and add or remove leads. No other email can sign in.
       </p>
       <div className="mt-4 max-w-3xl overflow-hidden rounded-md border border-gold/50 bg-paper">
         <table className="w-full text-sm">
@@ -41,7 +41,7 @@ export default async function BoardPage() {
                 <td className="px-4 py-3 text-ink/80">{m.email}</td>
                 <td className="px-4 py-3 text-xs text-ink/55">
                   {formatDateTime(m.created_at)}
-                  {m.added_by && <div>by {m.added_by}</div>}
+                  {m.added_by && m.added_by !== "setup script" && <div>by {m.added_by}</div>}
                 </td>
                 <td className="space-x-1 whitespace-nowrap px-4 py-3 text-right">
                   {m.id !== me.id && <ResetPasswordButton id={m.id} name={m.name} />}

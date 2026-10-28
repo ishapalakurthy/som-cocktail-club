@@ -33,9 +33,9 @@ export async function login(_prev: FormState, form: FormData): Promise<FormState
   // Only emails on the board list can sign in.
   const [admin] = await sql<{ id: string; password_hash: string | null }[]>`
     select id, password_hash from admins where email = ${email}`;
-  if (!admin) return { error: "That email isn't on the board list. Ask a current board member to add you." };
+  if (!admin) return { error: "That email isn't on the leads list. Ask a current lead to add you." };
   if (!admin.password_hash || !(await bcrypt.compare(password, admin.password_hash))) {
-    return { error: "Wrong password. If you forgot it, ask another board member to reset it." };
+    return { error: "Wrong password. If you forgot it, ask another lead to reset it." };
   }
   await startSession(admin.id);
   redirect("/admin");
@@ -165,13 +165,13 @@ export async function addBoardMember(_prev: FormState, form: FormData): Promise<
   const name = String(form.get("name") ?? "").trim();
   const password = String(form.get("password") ?? "");
   if (!name) return { error: "Please enter their name." };
-  if (!/^[^\s@]+@yale\.edu$/.test(email)) return { error: "Board members must use a @yale.edu email." };
+  if (!/^[^\s@]+@yale\.edu$/.test(email)) return { error: "Leads must use a @yale.edu email." };
   if (password.length < 8) return { error: "Temporary password must be at least 8 characters." };
   try {
     await sql`insert into admins (email, name, password_hash, added_by)
               values (${email}, ${name}, ${await bcrypt.hash(password, 10)}, ${me.email})`;
   } catch (err) {
-    if ((err as { code?: string }).code === "23505") return { error: "That email is already on the board." };
+    if ((err as { code?: string }).code === "23505") return { error: "That email is already a lead." };
     throw err;
   }
   revalidatePath("/admin/board");
@@ -180,7 +180,7 @@ export async function addBoardMember(_prev: FormState, form: FormData): Promise<
 
 export async function removeBoardMember(adminId: string): Promise<FormState> {
   const me = await requireAdmin();
-  if (adminId === me.id) return { error: "You can't remove yourself. Ask another board member to do it." };
+  if (adminId === me.id) return { error: "You can't remove yourself. Ask another lead to do it." };
   await sql`delete from admins where id = ${adminId}`;
   revalidatePath("/admin/board");
   return {};
