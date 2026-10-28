@@ -60,16 +60,16 @@ export default function EventLive(props: {
           return (
             <div key={g} className="flex items-baseline gap-3 border-b border-dashed border-gold py-3">
               <div>
-                <div className="display text-xl">{GROUPS[g].label}</div>
+                <div className="text-lg">{GROUPS[g].label}</div>
                 <div className="text-xs text-ink/55">
                   {r.confirmed.length}/{r.cap} taken · {r.waitlist.length} on waitlist
                 </div>
               </div>
               <span className="flex-1 translate-y-[-6px] border-b border-dotted border-gold/70" />
               {left > 0 ? (
-                <span className="display text-2xl text-pine">{left} {left === 1 ? "spot" : "spots"} left</span>
+                <span className="text-xl font-bold text-pine">{left} {left === 1 ? "spot" : "spots"} left</span>
               ) : (
-                <span className="display text-2xl text-wine">Full</span>
+                <span className="text-xl font-bold text-wine">Full</span>
               )}
             </div>
           );
