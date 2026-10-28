@@ -1,14 +1,20 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { formatPrice } from "@/lib/format";
 import { formatDateTime, PAYMENT_WINDOW_MS } from "@/lib/time";
 import { withdraw } from "./actions";
+
+// Venmo and Zelle are shown as matching tiles; Venmo opens the app, Zelle copies the number.
+const PAY_TILE =
+  "flex flex-col items-center rounded-md border border-navy/30 bg-cream px-4 py-3 text-center text-ink transition hover:border-navy hover:bg-paper";
 
 type Status = { status: "confirmed" | "waitlist" | "removed"; position: number | null; confirmedAt: string | null; paid: boolean };
 
 export default function StatusLive(props: {
   token: string;
   groupLabel: string;
+  firstName: string;
   initial: Status;
   priceCents: number;
   venmoHandle: string;
@@ -30,6 +36,7 @@ export default function StatusLive(props: {
   }, [props.token]);
 
   const price = (props.priceCents / 100).toFixed(2);
+  const [copied, setCopied] = useState(false);
   const venmoUrl = props.venmoHandle
     ? `https://venmo.com/?txn=pay&recipients=${encodeURIComponent(props.venmoHandle)}` +
       (props.priceCents > 0 ? `&amount=${price}` : "") +
@@ -42,15 +49,14 @@ export default function StatusLive(props: {
       {s.status === "confirmed" && (
         <div className="py-2 text-center">
           <div className="eyebrow text-pine">Confirmed</div>
-          <div className="display mt-1 text-5xl text-pine">You&apos;re in</div>
-          <div className="mt-2 text-sm text-ink/70">You have a spot ({props.groupLabel}).</div>
+          <div className="display mt-1 text-5xl text-pine">You&apos;re in, {props.firstName}</div>
         </div>
       )}
       {s.status === "waitlist" && (
         <div className="py-2 text-center">
           <div className="eyebrow">Waitlist</div>
           <div className="display mt-1 text-5xl text-gold-deep">No. {s.position}</div>
-          <div className="mx-auto mt-2 max-w-sm text-sm text-ink/70">
+          <div className="mx-auto mt-2 max-w-sm text-sm">
             {props.groupLabel} is full. If a spot opens up and you&apos;re moved in, this page will update, so
             check back. Don&apos;t pay unless you get a spot.
           </div>
@@ -58,8 +64,8 @@ export default function StatusLive(props: {
       )}
       {s.status === "removed" && (
         <div className="py-2 text-center">
-          <div className="display text-4xl text-ink/70">No longer signed up</div>
-          <div className="mt-2 text-sm text-ink/60">Your spot has been released. Message the board if this is a mistake.</div>
+          <div className="display text-4xl">No longer signed up</div>
+          <div className="mt-2 text-sm">Your spot has been released. Message the board if this is a mistake.</div>
         </div>
       )}
       <div className="rule" />
@@ -71,18 +77,32 @@ export default function StatusLive(props: {
             <p className="display mt-2 text-2xl text-pine">Payment received. Thank you!</p>
           ) : (
             <>
-              <p className="mt-2 text-sm text-ink/80">
-                {props.priceCents > 0 && <>Please send <b>${price}</b> </>}
+              <p className="mt-2 text-sm">
+                {props.priceCents > 0 && <>Please send <b>{formatPrice(props.priceCents)}</b> </>}
                 {s.confirmedAt && <>by <b>{formatDateTime(new Date(new Date(s.confirmedAt).getTime() + PAYMENT_WINDOW_MS))}</b></>}
-                , or your spot may go to the next person on the waitlist. It can take a little while for the board to mark it paid.
+                , or your spot may go to the next person on the waitlist.
               </p>
-              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {venmoUrl && (
-                  <a href={venmoUrl} target="_blank" rel="noreferrer" className="btn-primary">
-                    Pay @{props.venmoHandle} on Venmo
+                  <a href={venmoUrl} target="_blank" rel="noreferrer" className={PAY_TILE}>
+                    <span className="eyebrow text-navy">Venmo</span>
+                    <span className="mt-1 text-lg font-bold">@{props.venmoHandle}</span>
                   </a>
                 )}
-                {props.zelleInfo && <span className="text-sm text-ink/80">or Zelle <b>{props.zelleInfo}</b></span>}
+                {props.zelleInfo && (
+                  <button
+                    type="button"
+                    className={PAY_TILE}
+                    onClick={async () => {
+                      await navigator.clipboard.writeText(props.zelleInfo);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
+                  >
+                    <span className="eyebrow text-navy">{copied ? "Copied" : "Zelle"}</span>
+                    <span className="mt-1 text-lg font-bold">{props.zelleInfo}</span>
+                  </button>
+                )}
               </div>
             </>
           )}
@@ -92,7 +112,7 @@ export default function StatusLive(props: {
       {s.status !== "removed" && !props.eventOver && (
         <div className="pt-2 text-center">
           <button
-            className="text-sm text-ink/50 underline underline-offset-4 hover:text-wine"
+            className="text-sm text-ink underline underline-offset-4 hover:text-wine"
             disabled={pending}
             onClick={() => {
               const msg =

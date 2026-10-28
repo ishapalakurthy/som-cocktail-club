@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
-import { GROUPS, categoryLabel } from "@/lib/categories";
+import { GROUPS } from "@/lib/categories";
 import { getEventById, getSignupByToken, waitlistPosition } from "@/lib/signups";
-import { formatDateTime, requestTime } from "@/lib/time";
+import { requestTime } from "@/lib/time";
 import { emailEnabled } from "@/lib/email";
 import { MenuHeader } from "../../_components/Crest";
 import StatusLive from "./StatusLive";
@@ -25,9 +25,6 @@ export default async function StatusPage(props: PageProps<"/s/[token]">) {
           <MenuHeader />
         </Link>
         <h1 className="display mt-3 text-center text-3xl">{event.name}</h1>
-        <div className="mt-1 text-center text-sm text-ink/65">
-          {signup.name} · {categoryLabel(signup.category)} · {formatDateTime(event.starts_at)}
-        </div>
         {isNew && (
           <p className="mt-5 rounded-md border border-gold/50 bg-paper p-3 text-center text-sm">
             Thanks for signing up!{" "}
@@ -42,6 +39,7 @@ export default async function StatusPage(props: PageProps<"/s/[token]">) {
         <StatusLive
           token={token}
           groupLabel={GROUPS[signup.group_key].label}
+          firstName={signup.name.trim().split(/\s+/)[0]}
           initial={{
             status: signup.status,
             position: await waitlistPosition(signup),
