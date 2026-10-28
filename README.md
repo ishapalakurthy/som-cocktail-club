@@ -59,3 +59,14 @@ Every push to the `main` branch on GitHub redeploys the site automatically.
   never grab the same last spot.
 - `src/lib/email.ts` holds the email wording.
 - Schema changes: edit `db/schema.sql` (keep it re-runnable) and run it in Supabase's SQL Editor.
+
+## Troubleshooting
+
+**Pages keep reloading or flickering while running `npm run dev`.** The development build cache
+got into a bad state. Stop the dev server, delete the cache, and start it again:
+
+```bash
+rm -rf .next && npm run dev
+```
+
+This only affects local development, not the live site.
