@@ -22,9 +22,9 @@ export default async function BoardPage() {
         Everyone on this list has admin access: they sign in with their Yale email and password, manage events and
         rosters, and add or remove leads. No other email can sign in.
       </p>
-      <div className="mt-4 max-w-3xl overflow-hidden border-y border-gold/60">
+      <div className="mt-4 max-w-3xl overflow-hidden border-y border-line">
         <table className="w-full text-sm">
-          <thead className="bg-cream text-left text-xs uppercase tracking-wide text-ink/55">
+          <thead className="bg-sheet text-left text-xs uppercase tracking-wide text-ink/55">
             <tr>
               <th className="px-4 py-2 font-bold">Name</th>
               <th className="px-4 py-2 font-bold">Yale email</th>
@@ -34,7 +34,7 @@ export default async function BoardPage() {
           </thead>
           <tbody>
             {members.map((m) => (
-              <tr key={m.id} className="border-t border-gold/25">
+              <tr key={m.id} className="border-t border-line-soft">
                 <td className="px-4 py-3 font-bold">
                   {m.name} {m.id === me.id && <span className="text-xs font-normal text-ink/40">(you)</span>}
                 </td>

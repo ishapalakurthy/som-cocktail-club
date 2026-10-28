@@ -29,7 +29,7 @@ export default async function AdminHome(props: PageProps<"/admin">) {
       <div className="mt-8 overflow-x-auto">
         <table className="w-full min-w-[640px]">
           <thead>
-            <tr className="border-b border-ink/20 text-sm text-ink/60">
+            <tr className="border-b border-line text-sm text-ink/60">
               <th className="pb-3 text-left font-normal">{showArchived ? "Archived" : "Upcoming"}</th>
               <th className="w-28 pb-3 text-right font-normal">1st years</th>
               <th className="w-32 pb-3 text-right font-normal">2nd years</th>
@@ -44,7 +44,7 @@ export default async function AdminHome(props: PageProps<"/admin">) {
               </tr>
             )}
             {events.map((e) => (
-              <tr key={e.id} className="relative border-b border-ink/10 hover:bg-paper">
+              <tr key={e.id} className="relative border-b border-line-soft hover:bg-navy/[0.03]">
                 <td className="py-5 pr-6">
                   {/* The link covers the whole row so any part of it opens the roster. */}
                   <Link href={`/admin/events/${e.id}`} className="heading after:absolute after:inset-0">

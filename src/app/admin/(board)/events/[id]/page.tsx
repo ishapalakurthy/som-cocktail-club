@@ -61,7 +61,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
         </div>
       </div>
 
-      <div className="mt-6 flex gap-2 border-b border-gold/50">
+      <div className="mt-6 flex gap-2 border-b border-line">
         {GROUP_KEYS.map((g) => {
           const c = of(g, "confirmed").length;
           const w = of(g, "waitlist").length;
@@ -97,7 +97,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
         ) : (
           <Table head={["#", "Name", "Type", "Dietary", "Signed up", "Payment", ""]}>
             {confirmed.map((s, i) => (
-              <tr key={s.id} className="border-t border-gold/25 align-top">
+              <tr key={s.id} className="border-t border-line-soft align-top">
                 <Td className="text-ink/40">{i + 1}</Td>
                 <Person s={s} />
                 <Td className="text-xs text-ink/65">{categoryLabel(s.category)}</Td>
@@ -121,7 +121,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
         ) : (
           <Table head={["#", "Name", "Type", "Dietary", "Signed up", ""]}>
             {waitlist.map((s, i) => (
-              <tr key={s.id} className="border-t border-gold/25 align-top">
+              <tr key={s.id} className="border-t border-line-soft align-top">
                 <Td className="text-ink/40">{i + 1}</Td>
                 <Person s={s} />
                 <Td className="text-xs text-ink/65">{categoryLabel(s.category)}</Td>
@@ -154,7 +154,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
           <summary className="cursor-pointer text-sm font-bold text-ink/55">Removed ({removed.length})</summary>
           <Table head={["Name", "Signed up", "Removed", "By", ""]}>
             {removed.map((s) => (
-              <tr key={s.id} className="border-t border-gold/25 align-top text-ink/55">
+              <tr key={s.id} className="border-t border-line-soft align-top text-ink/55">
                 <Person s={s} />
                 <Td className="text-xs">{formatTime(s.created_at)}</Td>
                 <Td className="text-xs">{s.removed_at && formatTime(s.removed_at)}</Td>
@@ -226,9 +226,9 @@ function Section({ title, sub, children }: { title: string; sub?: string; childr
 
 function Table({ head, children }: { head: string[]; children: React.ReactNode }) {
   return (
-    <div className="mt-2 overflow-x-auto border-y border-gold/60">
+    <div className="mt-2 overflow-x-auto border-y border-line">
       <table className="w-full text-sm">
-        <thead className="bg-cream text-left text-xs uppercase tracking-wide text-ink/55">
+        <thead className="bg-sheet text-left text-xs uppercase tracking-wide text-ink/55">
           <tr>{head.map((h, i) => <th key={i} className="px-3 py-2 font-bold">{h}</th>)}</tr>
         </thead>
         <tbody>{children}</tbody>

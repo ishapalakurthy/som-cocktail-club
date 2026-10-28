@@ -6,7 +6,7 @@ import { logout } from "../actions";
 export default async function BoardLayout({ children }: LayoutProps<"/admin">) {
   const admin = await requireAdmin();
   return (
-    <div className="flex min-h-full flex-col">
+    <div className="theme-white flex min-h-full flex-col">
       <header className="text-cream">
         <nav className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-4 text-sm">
           <Link href="/admin" className="flex items-center gap-3">

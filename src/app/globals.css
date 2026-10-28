@@ -14,6 +14,26 @@
   --color-gold-deep: #8a6a35; /* small caps labels, warnings */
   --color-pine: #2e6b3a;      /* "you're in", paid */
   --color-wine: #9b2c2c;      /* full, overdue, errors */
+
+  /* Set per theme below. */
+  --color-sheet: var(--sheet);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+}
+
+/* Student pages: cream menu with gold dashed rules. */
+:root {
+  --sheet: #f5efe3;
+  --line: #b8955a;
+  --line-soft: rgb(184 149 90 / 0.3);
+  --line-style: dashed;
+}
+/* Admin pages: white sheet with thin, solid light-navy lines. */
+.theme-white {
+  --sheet: #ffffff;
+  --line: rgb(0 53 107 / 0.2);
+  --line-soft: rgb(0 53 107 / 0.09);
+  --line-style: solid;
 }
 
 body {
@@ -24,14 +44,14 @@ body {
 @layer components {
   /* The cream menu page, with a thin gold frame inset from its edge. */
   .sheet {
-    @apply rounded-sm bg-cream p-6 text-ink outline outline-1 -outline-offset-8 outline-gold sm:p-10;
+    @apply rounded-sm bg-sheet p-6 text-ink outline outline-1 -outline-offset-8 outline-line sm:p-10;
   }
   /* A section of the sheet, set off by a dashed rule like a printed menu (no boxes). */
   .card {
-    @apply border-t border-dashed border-gold pt-6;
+    @apply border-t border-line pt-6 [border-style:var(--line-style)];
   }
   .rule {
-    @apply border-t border-dashed border-gold;
+    @apply border-t border-line [border-style:var(--line-style)];
   }
   .eyebrow {
     @apply text-xs font-bold uppercase tracking-[0.2em] text-gold-deep;
@@ -52,13 +72,13 @@ body {
     @apply inline-flex items-center justify-center rounded-sm bg-navy px-4 py-2 text-sm font-bold text-cream transition hover:bg-navy-deep disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-sm border border-navy/30 bg-transparent px-4 py-2 text-sm font-bold text-ink transition hover:border-navy/50 hover:bg-cream disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center rounded-sm border border-navy/30 bg-transparent px-4 py-2 text-sm font-bold text-ink transition hover:border-navy/50 hover:bg-navy/5 disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-sm {
     @apply px-2.5 py-1 text-xs;
   }
   .input {
-    @apply w-full rounded-none border border-gold/70 bg-transparent px-3 py-2 text-sm text-ink outline-none placeholder:text-ink/35 focus:border-navy focus:ring-2 focus:ring-navy/15;
+    @apply w-full rounded-none border border-line bg-transparent px-3 py-2 text-sm text-ink outline-none placeholder:text-ink/35 focus:border-navy focus:ring-2 focus:ring-navy/15;
   }
   .label {
     @apply mb-1 block text-sm font-bold text-ink;
