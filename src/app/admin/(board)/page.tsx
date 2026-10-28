@@ -2,7 +2,7 @@ import Link from "next/link";
 import { sql, type EventRow } from "@/lib/db";
 import { formatDateTime } from "@/lib/time";
 
-export const metadata = { title: "Events · Cocktail Club Board" };
+export const metadata = { title: "Events · SOM Cocktail Club" };
 
 type Row = EventRow & { confirmed_first: number; confirmed_second: number; waitlist: number; paid: number };
 
@@ -22,40 +22,67 @@ export default async function AdminHome(props: PageProps<"/admin">) {
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="title">{showArchived ? "Archived events" : "Events"}</h1>
-        <Link href="/admin/events/new" className="btn-primary">+ New event</Link>
+        <h1 className="title">Events</h1>
+        <Link href="/admin/events/new" className="btn-primary">New event</Link>
       </div>
-      <div className="mt-6 border-t border-dashed border-gold">
-        {events.length === 0 && <p className="py-4 text-ink/55">No events yet.</p>}
-        {events.map((e) => {
-          const confirmed = e.confirmed_first + e.confirmed_second;
-          return (
-            <Link key={e.id} href={`/admin/events/${e.id}`} className="flex flex-wrap items-center gap-x-8 gap-y-2 border-b border-dashed border-gold py-4 hover:text-navy">
-              <div className="min-w-56 flex-1">
-                <div className="heading">{e.name}</div>
-                <div className="text-sm font-medium">{formatDateTime(e.starts_at)}</div>
-                <div className="text-sm text-ink/65">📍 {e.location}</div>
-              </div>
-              <Stat label="1st Years" value={`${e.confirmed_first}/${e.cap_first}`} />
-              <Stat label="2nd Years" value={`${e.confirmed_second}/${e.cap_second}`} />
-              <Stat label="Waitlist" value={e.waitlist} />
-              <Stat label="Paid" value={`${e.paid}/${confirmed}`} />
-            </Link>
-          );
-        })}
+
+      <div className="mt-8 overflow-x-auto">
+        <table className="w-full min-w-[640px]">
+          <thead>
+            <tr className="border-b border-ink/20 text-sm text-ink/60">
+              <th className="pb-3 text-left font-normal">{showArchived ? "Archived" : "Upcoming"}</th>
+              <th className="w-28 pb-3 text-right font-normal">1st years</th>
+              <th className="w-32 pb-3 text-right font-normal">2nd years</th>
+              <th className="w-24 pb-3 text-right font-normal">Waitlist</th>
+              <th className="w-24 pb-3 text-right font-normal">Paid</th>
+            </tr>
+          </thead>
+          <tbody>
+            {events.length === 0 && (
+              <tr>
+                <td colSpan={5} className="py-6 text-ink/60">No events yet.</td>
+              </tr>
+            )}
+            {events.map((e) => (
+              <tr key={e.id} className="relative border-b border-ink/10 hover:bg-paper">
+                <td className="py-5 pr-6">
+                  {/* The link covers the whole row so any part of it opens the roster. */}
+                  <Link href={`/admin/events/${e.id}`} className="heading after:absolute after:inset-0">
+                    {e.name}
+                  </Link>
+                  <div className="mt-1 text-sm text-ink/60">
+                    {formatDateTime(e.starts_at)} · {e.location}
+                  </div>
+                </td>
+                <CountCell taken={e.confirmed_first} cap={e.cap_first} />
+                <CountCell taken={e.confirmed_second} cap={e.cap_second} />
+                <td className="py-5 text-right tabular-nums">{e.waitlist}</td>
+                <td className="py-5 text-right tabular-nums">
+                  {e.paid}/{e.confirmed_first + e.confirmed_second}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-      <Link href={showArchived ? "/admin" : "/admin?archived=1"} className="mt-8 inline-block text-sm text-ink/55 hover:underline">
-        {showArchived ? "← Back to events" : "View archived events"}
+
+      <Link
+        href={showArchived ? "/admin" : "/admin?archived=1"}
+        className="mt-8 inline-block text-sm text-ink/60 underline underline-offset-4 hover:text-ink"
+      >
+        {showArchived ? "Back to upcoming events" : "View archived events"}
       </Link>
     </>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string | number }) {
+function CountCell({ taken, cap }: { taken: number; cap: number }) {
   return (
-    <div className="text-center">
-      <div className="heading tabular-nums">{value}</div>
-      <div className="text-xs text-ink/55">{label}</div>
-    </div>
+    <td className="py-5 text-right tabular-nums">
+      {taken >= cap && cap > 0 && (
+        <span className="mr-2 rounded-sm bg-wine/10 px-1.5 py-0.5 text-xs text-wine">Full</span>
+      )}
+      {taken}/{cap}
+    </td>
   );
 }
