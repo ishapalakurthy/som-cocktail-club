@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { CATEGORIES } from "@/lib/categories";
-import { sendSignupEmail } from "@/lib/email";
+import { emailEnabled, sendSignupEmail } from "@/lib/email";
 import { createSignup, DuplicateSignupError, getEventBySlug, waitlistPosition } from "@/lib/signups";
 
 export type SignupState = { error?: string };
@@ -34,7 +34,11 @@ export async function signUp(slug: string, _prev: SignupState, form: FormData): 
     token = s.token;
   } catch (err) {
     if (err instanceof DuplicateSignupError) {
-      return { error: "You're already signed up for this event. Check your email for your status link." };
+      return {
+        error: emailEnabled
+          ? "You're already signed up for this event. Check your email for your status link."
+          : "You're already signed up for this event. Use the status page you bookmarked, or ask the board.",
+      };
     }
     console.error(err);
     return { error: "Something went wrong. Please try again." };

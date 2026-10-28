@@ -4,6 +4,8 @@ import { formatDateTime } from "@/lib/time";
 import { removeBoardMember } from "../../actions";
 import ActionButton from "../../_components/ActionButton";
 import AddBoardMember from "./AddBoardMember";
+import ChangePassword from "./ChangePassword";
+import ResetPasswordButton from "./ResetPasswordButton";
 
 export const metadata = { title: "Board members · Cocktail Club Board" };
 
@@ -17,8 +19,8 @@ export default async function BoardPage() {
     <>
       <h1 className="text-2xl font-bold">Board members</h1>
       <p className="mt-1 text-sm text-stone-600">
-        Everyone on this list has admin access: they can sign in with their Yale email, manage events and rosters,
-        and add or remove board members.
+        Everyone on this list has admin access: they sign in with their Yale email and password, manage events and
+        rosters, and add or remove board members. No other email can sign in.
       </p>
       <div className="mt-4 max-w-3xl overflow-hidden rounded-xl border border-stone-200 bg-white">
         <table className="w-full text-sm">
@@ -41,7 +43,8 @@ export default async function BoardPage() {
                   {formatDateTime(m.created_at)}
                   {m.added_by && <div>by {m.added_by}</div>}
                 </td>
-                <td className="px-4 py-3 text-right">
+                <td className="space-x-1 whitespace-nowrap px-4 py-3 text-right">
+                  {m.id !== me.id && <ResetPasswordButton id={m.id} name={m.name} />}
                   {m.id !== me.id && (
                     <ActionButton
                       action={removeBoardMember.bind(null, m.id)}
@@ -57,6 +60,7 @@ export default async function BoardPage() {
         </table>
       </div>
       <AddBoardMember />
+      <ChangePassword />
     </>
   );
 }

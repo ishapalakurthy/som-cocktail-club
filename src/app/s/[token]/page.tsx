@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { GROUPS, categoryLabel } from "@/lib/categories";
 import { getEventById, getSignupByToken, waitlistPosition } from "@/lib/signups";
 import { formatDateTime, requestTime } from "@/lib/time";
+import { emailEnabled } from "@/lib/email";
 import StatusLive from "./StatusLive";
 
 export const metadata = { title: "Your spot · Cocktail Club" };
@@ -23,7 +24,12 @@ export default async function StatusPage(props: PageProps<"/s/[token]">) {
       </Link>
       {isNew && (
         <p className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-900">
-          Thanks for signing up! We also emailed this page&apos;s link to <b>{signup.email}</b> so you can come back to it.
+          Thanks for signing up!{" "}
+          {emailEnabled ? (
+            <>We also emailed this page&apos;s link to <b>{signup.email}</b> so you can come back to it.</>
+          ) : (
+            <><b>Bookmark this page</b>: it&apos;s your private link to check your spot or give it up.</>
+          )}
         </p>
       )}
       <div className="mt-4 text-sm text-stone-600">
@@ -44,6 +50,7 @@ export default async function StatusPage(props: PageProps<"/s/[token]">) {
         zelleInfo={event.zelle_info}
         eventName={event.name}
         eventOver={event.starts_at.getTime() < requestTime()}
+        emailEnabled={emailEnabled}
       />
     </main>
   );
