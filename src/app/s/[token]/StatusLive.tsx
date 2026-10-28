@@ -97,7 +97,7 @@ export default function StatusLive(props: {
             onClick={() => {
               const msg =
                 s.status === "confirmed"
-                  ? "Give up your spot? You can't undo this. If it's within 48 hours of the event and nobody takes your place, you're still responsible for the ticket cost."
+                  ? "Give up your spot? You can't undo this. If it's within 5 hours of the event and nobody takes your place, you're still responsible for the ticket cost."
                   : "Leave the waitlist? You can't undo this.";
               if (confirm(msg)) startTransition(async () => {
                   await withdraw(props.token);
