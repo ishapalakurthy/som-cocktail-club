@@ -22,31 +22,32 @@ export default async function BoardPage() {
         Everyone on this list has admin access: they sign in with their Yale email and password, manage events and
         rosters, and add or remove leads. No other email can sign in.
       </p>
-      <div className="mt-4 max-w-3xl overflow-hidden border-y border-line">
+      <div className="mt-8 max-w-3xl overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-sheet text-left text-xs uppercase tracking-wide text-ink/55">
+          <thead className="border-b border-line text-left text-xs uppercase tracking-wide text-ink/55">
             <tr>
-              <th className="px-4 py-2 font-bold">Name</th>
-              <th className="px-4 py-2 font-bold">Yale email</th>
-              <th className="px-4 py-2 font-bold">Added</th>
-              <th className="px-4 py-2" />
+              <th className="py-2 pr-4 font-bold">Name</th>
+              <th className="py-2 pr-4 font-bold">Yale email</th>
+              <th className="py-2 pr-4 font-bold">Added</th>
+              <th className="py-2" />
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-line-soft">
             {members.map((m) => (
-              <tr key={m.id} className="border-t border-line-soft">
-                <td className="px-4 py-3 font-bold">
+              <tr key={m.id}>
+                <td className="py-3 pr-4 font-bold">
                   {m.name} {m.id === me.id && <span className="text-xs font-normal text-ink/40">(you)</span>}
                 </td>
-                <td className="px-4 py-3 text-ink/80">{m.email}</td>
-                <td className="px-4 py-3 text-xs text-ink/55">
+                <td className="py-3 pr-4 text-ink/80">{m.email}</td>
+                <td className="py-3 pr-4 text-xs text-ink/55">
                   {formatDateTime(m.created_at)}
                   {m.added_by && m.added_by !== "setup script" && <div>by {m.added_by}</div>}
                 </td>
-                <td className="space-x-1 whitespace-nowrap px-4 py-3 text-right">
+                <td className="space-x-4 whitespace-nowrap py-3 text-right">
                   {m.id !== me.id && <ResetPasswordButton id={m.id} name={m.name} />}
                   {m.id !== me.id && (
                     <ActionButton
+                      className="text-sm text-wine hover:underline"
                       action={removeBoardMember.bind(null, m.id)}
                       confirm={`Remove ${m.name} from the board? They'll lose admin access immediately.`}
                     >

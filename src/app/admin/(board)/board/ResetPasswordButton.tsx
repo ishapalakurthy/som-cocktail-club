@@ -9,7 +9,7 @@ export default function ResetPasswordButton({ id, name }: { id: string; name: st
   return (
     <button
       type="button"
-      className="btn-secondary btn-sm"
+      className="text-sm text-navy hover:underline"
       disabled={pending}
       onClick={() => {
         const password = window.prompt(`New temporary password for ${name} (8+ characters):`);
