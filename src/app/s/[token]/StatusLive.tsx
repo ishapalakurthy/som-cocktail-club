@@ -7,7 +7,7 @@ import { formatDateTime, PAYMENT_WINDOW_MS } from "@/lib/time";
 import { withdraw } from "./actions";
 
 // Venmo and Zelle are matching menu lines; Venmo opens the app, Zelle copies the number.
-const PAY_ROW = "flex w-full items-baseline justify-between gap-3 border-b border-dashed border-gold py-3 text-left hover:text-navy";
+const PAY_ROW = "flex w-full items-baseline justify-between gap-3 border-b border-line py-3 text-left hover:text-navy";
 
 type Status = { status: "confirmed" | "waitlist" | "removed"; position: number | null; confirmedAt: string | null; paid: boolean };
 
@@ -83,7 +83,7 @@ export default function StatusLive(props: {
                 {s.confirmedAt && <>by <b>{formatDateTime(new Date(new Date(s.confirmedAt).getTime() + PAYMENT_WINDOW_MS))}</b></>}
                 , or your spot may go to the next person on the waitlist.
               </p>
-              <div className="mt-5 border-t border-dashed border-gold">
+              <div className="mt-5 border-t border-line">
                 {venmoUrl && (
                   <a href={venmoUrl} target="_blank" rel="noreferrer" className={PAY_ROW}>
                     <span>Venmo</span>

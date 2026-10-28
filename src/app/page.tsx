@@ -21,10 +21,9 @@ export default async function Home() {
           <Link
             key={e.id}
             href={`/e/${e.slug}`}
-            className="flex items-baseline gap-3 border-b border-dashed border-gold py-4 hover:text-navy"
+            className="flex items-baseline justify-between gap-3 border-b border-line py-4 hover:text-navy"
           >
             <span className="heading">{e.name}</span>
-            <span className="flex-1 translate-y-[-4px] border-b border-dotted border-gold/70" />
             <span className="text-sm text-ink/70">{formatDateTime(e.starts_at)}</span>
           </Link>
         ))}

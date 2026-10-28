@@ -21,12 +21,12 @@
   --color-line-soft: var(--line-soft);
 }
 
-/* Student pages: cream menu with gold dashed rules. */
+/* Student pages: cream menu with thin, solid, soft-gold lines. */
 :root {
   --sheet: #f5efe3;
-  --line: #b8955a;
-  --line-soft: rgb(184 149 90 / 0.3);
-  --line-style: dashed;
+  --line: rgb(184 149 90 / 0.5);
+  --line-soft: rgb(184 149 90 / 0.25);
+  --line-style: solid;
 }
 /* Admin pages: white sheet with thin, solid light-navy lines. */
 .theme-white {
@@ -46,7 +46,7 @@ body {
   .sheet {
     @apply rounded-sm bg-sheet p-6 text-ink outline outline-1 -outline-offset-8 outline-line sm:p-10;
   }
-  /* A section of the sheet, set off by a dashed rule like a printed menu (no boxes). */
+  /* A section of the sheet, set off by a thin rule (no boxes). */
   .card {
     @apply border-t border-line pt-6 [border-style:var(--line-style)];
   }

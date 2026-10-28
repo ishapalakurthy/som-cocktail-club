@@ -57,7 +57,7 @@ export default function EventLive(props: {
           const r = roster[g];
           const left = Math.max(0, r.cap - r.confirmed.length);
           return (
-            <div key={g} className="flex items-baseline gap-3 border-b border-dashed border-gold py-3">
+            <div key={g} className="flex items-baseline gap-3 border-b border-line py-3">
               <div className="flex-1">{GROUPS[g].label}</div>
               {left > 0 ? (
                 <span className="font-bold text-pine">{left} {left === 1 ? "spot" : "spots"} left</span>
@@ -90,11 +90,11 @@ export default function EventLive(props: {
         <div className="mt-4 grid gap-x-8 gap-y-6 sm:grid-cols-2">
           {GROUP_KEYS.map((g) => (
             <div key={g}>
-              <div className="eyebrow border-b border-dashed border-gold pb-2">{GROUPS[g].short}</div>
+              <div className="eyebrow border-b border-line pb-2">{GROUPS[g].short}</div>
               <NameList names={roster[g].confirmed} empty="No one yet" />
               {roster[g].waitlist.length > 0 && (
                 <>
-                  <div className="eyebrow mt-5 border-b border-dashed border-gold pb-2 text-ink/50">Waitlist</div>
+                  <div className="eyebrow mt-5 border-b border-line pb-2 text-ink/50">Waitlist</div>
                   <NameList names={roster[g].waitlist} muted />
                 </>
               )}
@@ -159,7 +159,7 @@ function SignupForm({ slug }: { slug: string }) {
         <label className="label" htmlFor="dietary">Dietary restrictions</label>
         <input id="dietary" name="dietary" className="input" defaultValue={v.dietary} />
       </div>
-      <fieldset className="space-y-1.5 border-y border-dashed border-gold py-3 text-sm">
+      <fieldset className="space-y-1.5 border-y border-line py-3 text-sm">
         <legend className="label">By signing up, you acknowledge: *</legend>
         <Ack name="ack1" checked={v.ack1 === "on"}>I will check this page to confirm whether I have received a spot at the event.</Ack>
         <Ack name="ack2" checked={v.ack2 === "on"}>If I get a spot, I will Venmo / Zelle within 24 hours.</Ack>
