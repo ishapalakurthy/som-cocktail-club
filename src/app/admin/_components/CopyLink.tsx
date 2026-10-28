@@ -14,7 +14,7 @@ export default function CopyLink({ url }: { url: string }) {
         setTimeout(() => setCopied(false), 2000);
       }}
     >
-      {copied ? "Copied! Paste it in Slack" : "📋 Copy Slack link"}
+      {copied ? "Copied! Paste it in Slack" : "Copy Slack link"}
     </button>
   );
 }

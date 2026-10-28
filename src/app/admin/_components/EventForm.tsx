@@ -44,7 +44,7 @@ export default function EventForm({ eventId, initial }: { eventId: string | null
       </div>
       <div>
         <label className="label" htmlFor="slug">Link name *</label>
-        <div className="flex items-center gap-1 text-sm text-stone-500">
+        <div className="flex items-center gap-1 text-sm text-ink/55">
           <span>…/e/</span>
           <input
             id="slug" name="slug" required className="input" value={slug}
@@ -65,7 +65,7 @@ export default function EventForm({ eventId, initial }: { eventId: string | null
           <input id="opens_at" name="opens_at" type="datetime-local" required className="input" defaultValue={v.opens_at} />
         </div>
       </div>
-      <p className="-mt-2 text-xs text-stone-500">Times are New Haven time. Before the unlock time, students see a countdown instead of the form.</p>
+      <p className="-mt-2 text-xs text-ink/55">Times are New Haven time. Before the unlock time, students see a countdown instead of the form.</p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor="cap_first">{GROUPS.first.label} spots *</label>
@@ -98,7 +98,7 @@ export default function EventForm({ eventId, initial }: { eventId: string | null
           <input id="zelle_info" name="zelle_info" required className="input" defaultValue={v.zelle_info} />
         </div>
       </div>
-      {state.error && <p className="rounded-lg bg-rose-50 p-3 text-sm text-rose-800">{state.error}</p>}
+      {state.error && <p className="rounded-lg bg-wine/5 p-3 text-sm text-wine">{state.error}</p>}
       <button className="btn-primary" disabled={pending}>{pending ? "Saving…" : eventId ? "Save changes" : "Create event"}</button>
     </form>
   );

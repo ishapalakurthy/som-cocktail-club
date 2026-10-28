@@ -22,18 +22,18 @@ export default async function AdminHome(props: PageProps<"/admin">) {
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{showArchived ? "Archived events" : "Events"}</h1>
+        <h1 className="display text-4xl">{showArchived ? "Archived events" : "Events"}</h1>
         <Link href="/admin/events/new" className="btn-primary">+ New event</Link>
       </div>
       <div className="mt-6 grid gap-3">
-        {events.length === 0 && <p className="text-stone-500">No events yet.</p>}
+        {events.length === 0 && <p className="text-ink/55">No events yet.</p>}
         {events.map((e) => {
           const confirmed = e.confirmed_first + e.confirmed_second;
           return (
-            <Link key={e.id} href={`/admin/events/${e.id}`} className="card flex flex-wrap items-center gap-x-8 gap-y-2 hover:border-rose-300">
+            <Link key={e.id} href={`/admin/events/${e.id}`} className="card flex flex-wrap items-center gap-x-8 gap-y-2 hover:border-gold">
               <div className="min-w-56 flex-1">
-                <div className="font-semibold">{e.name}</div>
-                <div className="text-sm text-stone-600">{formatDateTime(e.starts_at)}</div>
+                <div className="display text-2xl">{e.name}</div>
+                <div className="text-sm text-ink/65">{formatDateTime(e.starts_at)}</div>
               </div>
               <Stat label="1st Years" value={`${e.confirmed_first}/${e.cap_first}`} />
               <Stat label="2nd Years" value={`${e.confirmed_second}/${e.cap_second}`} />
@@ -43,7 +43,7 @@ export default async function AdminHome(props: PageProps<"/admin">) {
           );
         })}
       </div>
-      <Link href={showArchived ? "/admin" : "/admin?archived=1"} className="mt-8 inline-block text-sm text-stone-500 hover:underline">
+      <Link href={showArchived ? "/admin" : "/admin?archived=1"} className="mt-8 inline-block text-sm text-ink/55 hover:underline">
         {showArchived ? "← Back to events" : "View archived events"}
       </Link>
     </>
@@ -53,8 +53,8 @@ export default async function AdminHome(props: PageProps<"/admin">) {
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="text-center">
-      <div className="text-lg font-semibold tabular-nums">{value}</div>
-      <div className="text-xs text-stone-500">{label}</div>
+      <div className="display text-2xl tabular-nums">{value}</div>
+      <div className="text-xs text-ink/55">{label}</div>
     </div>
   );
 }

@@ -51,54 +51,58 @@ export default function EventLive(props: {
 
   return (
     <>
-      <div className="mt-6 grid gap-3 sm:grid-cols-2">
+      <section className="mt-8">
+        <h2 className="eyebrow text-center">Spots</h2>
+        <div className="rule mt-3" />
         {GROUP_KEYS.map((g) => {
           const r = roster[g];
           const left = Math.max(0, r.cap - r.confirmed.length);
           return (
-            <div key={g} className="card">
-              <div className="text-sm font-medium text-stone-600">{GROUPS[g].label}</div>
-              <div className="mt-1 text-2xl font-bold">
-                {left > 0 ? (
-                  <span className="text-emerald-700">{left} {left === 1 ? "spot" : "spots"} left</span>
-                ) : (
-                  <span className="text-rose-700">Full</span>
-                )}
+            <div key={g} className="flex items-baseline gap-3 border-b border-dashed border-gold py-3">
+              <div>
+                <div className="display text-xl">{GROUPS[g].label}</div>
+                <div className="text-xs text-ink/55">
+                  {r.confirmed.length}/{r.cap} taken · {r.waitlist.length} on waitlist
+                </div>
               </div>
-              <div className="text-sm text-stone-500">
-                {r.confirmed.length}/{r.cap} taken · {r.waitlist.length} on waitlist
-              </div>
+              <span className="flex-1 translate-y-[-6px] border-b border-dotted border-gold/70" />
+              {left > 0 ? (
+                <span className="display text-2xl text-pine">{left} {left === 1 ? "spot" : "spots"} left</span>
+              ) : (
+                <span className="display text-2xl text-wine">Full</span>
+              )}
             </div>
           );
         })}
-      </div>
+      </section>
 
-      <section className="card mt-6">
+      <section className="card mt-8">
         {notYet ? (
           <div className="py-6 text-center">
-            <div className="text-sm text-stone-600">Signups open {formatDateTime(props.opensAt)}</div>
-            <div className="mt-2 font-mono text-4xl font-bold tabular-nums">
+            <div className="eyebrow">Signups open</div>
+            <div className="mt-1 text-sm text-ink/70">{formatDateTime(props.opensAt)}</div>
+            <div className="display mt-3 text-6xl tabular-nums text-navy">
               {formatCountdown(props.opensAt - currentNow)}
             </div>
           </div>
         ) : isOpen ? (
           <SignupForm slug={props.slug} />
         ) : (
-          <p className="py-4 text-center text-stone-600">Signups for this event are closed.</p>
+          <p className="display py-4 text-center text-xl text-ink/70">Signups for this event are closed.</p>
         )}
       </section>
 
-      <section className="mt-8">
-        <h2 className="text-xl font-semibold">Who&apos;s coming</h2>
-        <div className="mt-3 grid gap-4 sm:grid-cols-2">
+      <section className="mt-10">
+        <h2 className="display text-center text-3xl">Who&apos;s coming</h2>
+        <div className="mt-4 grid gap-x-8 gap-y-6 sm:grid-cols-2">
           {GROUP_KEYS.map((g) => (
-            <div key={g} className="card">
-              <div className="font-medium">{GROUPS[g].label}</div>
+            <div key={g}>
+              <div className="eyebrow border-b border-dashed border-gold pb-2">{GROUPS[g].short}</div>
               <NameList names={roster[g].confirmed} empty="No one yet" />
               {roster[g].waitlist.length > 0 && (
                 <>
-                  <div className="mt-4 text-sm font-medium text-stone-500">Waitlist</div>
-                  <NameList names={roster[g].waitlist} />
+                  <div className="eyebrow mt-5 border-b border-dashed border-gold pb-2 text-ink/50">Waitlist</div>
+                  <NameList names={roster[g].waitlist} muted />
                 </>
               )}
             </div>
@@ -109,12 +113,15 @@ export default function EventLive(props: {
   );
 }
 
-function NameList({ names, empty }: { names: string[]; empty?: string }) {
-  if (names.length === 0) return <p className="mt-2 text-sm text-stone-400">{empty}</p>;
+function NameList({ names, empty, muted }: { names: string[]; empty?: string; muted?: boolean }) {
+  if (names.length === 0) return <p className="mt-2 text-sm italic text-ink/40">{empty}</p>;
   return (
-    <ol className="mt-2 list-decimal space-y-0.5 pl-6 text-sm">
+    <ol className={`mt-2 space-y-1 text-[15px] ${muted ? "text-ink/55" : ""}`}>
       {names.map((n, i) => (
-        <li key={i}>{n}</li>
+        <li key={i} className="flex gap-3">
+          <span className="w-5 text-right tabular-nums text-gold-deep">{i + 1}</span>
+          <span>{n}</span>
+        </li>
       ))}
     </ol>
   );
@@ -135,13 +142,13 @@ function SignupForm({ slug }: { slug: string }) {
 
   return (
     <form action={action} className="space-y-4">
-      <h2 className="text-xl font-semibold">Sign up</h2>
+      <h2 className="display text-center text-3xl">Reserve your spot</h2>
       <div>
         <label className="label" htmlFor="name">Your name *</label>
         <input id="name" name="name" required className="input" defaultValue={v.name} autoComplete="name" />
       </div>
       <div>
-        <label className="label" htmlFor="email">Yale email * <span className="font-normal text-stone-500">(partners: use your partner&apos;s email)</span></label>
+        <label className="label" htmlFor="email">Yale email * <span className="font-normal text-ink/55">(partners: use your partner&apos;s email)</span></label>
         <input id="email" name="email" type="email" required className="input" defaultValue={v.email} placeholder="you@yale.edu" autoComplete="email" />
       </div>
       <fieldset>
@@ -149,7 +156,7 @@ function SignupForm({ slug }: { slug: string }) {
         <div className="space-y-1.5">
           {CATEGORIES.map((c) => (
             <label key={c.key} className="flex items-center gap-2 text-sm">
-              <input type="radio" name="category" value={c.key} required className="accent-rose-700" defaultChecked={v.category === c.key} />
+              <input type="radio" name="category" value={c.key} required className="accent-navy" defaultChecked={v.category === c.key} />
               {c.label}
             </label>
           ))}
@@ -159,15 +166,15 @@ function SignupForm({ slug }: { slug: string }) {
         <label className="label" htmlFor="dietary">Dietary restrictions</label>
         <input id="dietary" name="dietary" className="input" defaultValue={v.dietary} />
       </div>
-      <fieldset className="space-y-1.5 rounded-lg bg-stone-50 p-3 text-sm">
+      <fieldset className="space-y-1.5 border-y border-dashed border-gold py-3 text-sm">
         <legend className="label">By signing up, you acknowledge: *</legend>
         <Ack name="ack1" checked={v.ack1 === "on"}>I will check this page to confirm whether I have received a spot at the event.</Ack>
         <Ack name="ack2" checked={v.ack2 === "on"}>If I get a spot, I will Venmo / Zelle within 24 hours.</Ack>
         <Ack name="ack3" checked={v.ack3 === "on"}>If I do not pay within that time period, my seat may be given to another person.</Ack>
       </fieldset>
-      {state.error && <p className="rounded-lg bg-rose-50 p-3 text-sm text-rose-800">{state.error}</p>}
+      {state.error && <p className="rounded-md border border-wine/30 bg-wine/5 p-3 text-sm text-wine">{state.error}</p>}
       <button className="btn-primary w-full py-3 text-base" disabled={pending}>
-        {pending ? "Signing you up…" : "Sign up"}
+        {pending ? "Reserving…" : "Reserve my spot"}
       </button>
     </form>
   );
@@ -176,7 +183,7 @@ function SignupForm({ slug }: { slug: string }) {
 function Ack({ name, checked, children }: { name: string; checked: boolean; children: React.ReactNode }) {
   return (
     <label className="flex items-start gap-2">
-      <input type="checkbox" name={name} required className="mt-0.5 accent-rose-700" defaultChecked={checked} />
+      <input type="checkbox" name={name} required className="mt-0.5 accent-navy" defaultChecked={checked} />
       <span>{children}</span>
     </label>
   );

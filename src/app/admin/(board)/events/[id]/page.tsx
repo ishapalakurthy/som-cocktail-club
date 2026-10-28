@@ -29,19 +29,19 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
   return (
     <>
       <AutoRefresh />
-      <Link href="/admin" className="text-sm text-stone-500 hover:underline">← All events</Link>
+      <Link href="/admin" className="text-sm text-ink/55 hover:underline">← All events</Link>
       <div className="mt-2 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">{event.name}</h1>
-          <div className="text-sm text-stone-600">
+          <h1 className="display text-4xl">{event.name}</h1>
+          <div className="text-sm text-ink/65">
             {formatDateTime(event.starts_at)}
             {event.location && ` · ${event.location}`}
           </div>
           <div className="mt-1 text-sm">
             {opensIn > 0 ? (
-              <span className="text-amber-700">🔒 Signups unlock {formatDateTime(event.opens_at)} (in {formatDuration(opensIn)})</span>
+              <span className="text-gold-deep">Signups unlock {formatDateTime(event.opens_at)} (in {formatDuration(opensIn)})</span>
             ) : (
-              <span className="text-emerald-700">🟢 Signups opened {formatDateTime(event.opens_at)}</span>
+              <span className="text-pine">Signups opened {formatDateTime(event.opens_at)}</span>
             )}
           </div>
         </div>
@@ -60,7 +60,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
         </div>
       </div>
 
-      <div className="mt-6 flex gap-2 border-b border-stone-200">
+      <div className="mt-6 flex gap-2 border-b border-gold/50">
         {GROUP_KEYS.map((g) => {
           const c = of(g, "confirmed").length;
           const w = of(g, "waitlist").length;
@@ -69,23 +69,23 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
               key={g}
               href={`?group=${g}`}
               className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium ${
-                g === group ? "border-rose-700 text-rose-800" : "border-transparent text-stone-500 hover:text-stone-800"
+                g === group ? "border-navy text-navy" : "border-transparent text-ink/55 hover:text-ink"
               }`}
             >
-              {GROUPS[g].label} <span className="ml-1 text-stone-500">{c}/{capacity(event, g)} · {w} waiting</span>
+              {GROUPS[g].label} <span className="ml-1 text-ink/55">{c}/{capacity(event, g)} · {w} waiting</span>
             </Link>
           );
         })}
       </div>
 
       {openSpots > 0 && waitlist.length > 0 && (
-        <div className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+        <div className="mt-4 rounded-lg border border-gold bg-gold/10 p-3 text-sm text-ink">
           {openSpots} open {openSpots === 1 ? "spot" : "spots"}. Use <b>Move up</b> on the waitlist below to fill
           {openSpots === 1 ? " it" : " them"}.
         </div>
       )}
       {openSpots < 0 && (
-        <div className="mt-4 rounded-lg border border-stone-300 bg-stone-50 p-3 text-sm text-stone-700">
+        <div className="mt-4 rounded-lg border border-gold bg-cream p-3 text-sm text-ink/80">
           {-openSpots} over capacity.
         </div>
       )}
@@ -96,12 +96,12 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
         ) : (
           <Table head={["#", "Name", "Type", "Dietary", "Signed up", "Payment", ""]}>
             {confirmed.map((s, i) => (
-              <tr key={s.id} className="border-t border-stone-100 align-top">
-                <Td className="text-stone-400">{i + 1}</Td>
+              <tr key={s.id} className="border-t border-gold/25 align-top">
+                <Td className="text-ink/40">{i + 1}</Td>
                 <Person s={s} />
-                <Td className="text-xs text-stone-600">{categoryLabel(s.category)}</Td>
+                <Td className="text-xs text-ink/65">{categoryLabel(s.category)}</Td>
                 <Td className="text-xs">{s.dietary}</Td>
-                <Td className="whitespace-nowrap text-xs text-stone-600">{formatTime(s.created_at)}</Td>
+                <Td className="whitespace-nowrap text-xs text-ink/65">{formatTime(s.created_at)}</Td>
                 <Td><Payment s={s} now={now} /></Td>
                 <Td className="text-right">
                   <ActionButton action={remove.bind(null, s.id)} confirm={`Remove ${s.name}? Their spot will open up.`}>
@@ -120,12 +120,12 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
         ) : (
           <Table head={["#", "Name", "Type", "Dietary", "Signed up", ""]}>
             {waitlist.map((s, i) => (
-              <tr key={s.id} className="border-t border-stone-100 align-top">
-                <Td className="text-stone-400">{i + 1}</Td>
+              <tr key={s.id} className="border-t border-gold/25 align-top">
+                <Td className="text-ink/40">{i + 1}</Td>
                 <Person s={s} />
-                <Td className="text-xs text-stone-600">{categoryLabel(s.category)}</Td>
+                <Td className="text-xs text-ink/65">{categoryLabel(s.category)}</Td>
                 <Td className="text-xs">{s.dietary}</Td>
-                <Td className="whitespace-nowrap text-xs text-stone-600">{formatTime(s.created_at)}</Td>
+                <Td className="whitespace-nowrap text-xs text-ink/65">{formatTime(s.created_at)}</Td>
                 <Td className="space-x-1 whitespace-nowrap text-right">
                   <ActionButton
                     action={promote.bind(null, s.id)}
@@ -150,10 +150,10 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
 
       {removed.length > 0 && (
         <details className="mt-8">
-          <summary className="cursor-pointer text-sm font-medium text-stone-500">Removed ({removed.length})</summary>
+          <summary className="cursor-pointer text-sm font-medium text-ink/55">Removed ({removed.length})</summary>
           <Table head={["Name", "Signed up", "Removed", "By", ""]}>
             {removed.map((s) => (
-              <tr key={s.id} className="border-t border-stone-100 align-top text-stone-500">
+              <tr key={s.id} className="border-t border-gold/25 align-top text-ink/55">
                 <Person s={s} />
                 <Td className="text-xs">{formatTime(s.created_at)}</Td>
                 <Td className="text-xs">{s.removed_at && formatTime(s.removed_at)}</Td>
@@ -179,10 +179,10 @@ function Payment({ s, now }: { s: SignupRow; now: number }) {
   if (s.paid) {
     return (
       <div className="flex items-center gap-2 whitespace-nowrap">
-        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800">
-          ✓ Paid · {s.payment_method === "venmo" ? "Venmo" : s.payment_method === "zelle" ? "Zelle" : "Other"}
+        <span className="rounded-full bg-pine/10 px-2 py-0.5 text-xs font-medium text-pine">
+          Paid · {s.payment_method === "venmo" ? "Venmo" : s.payment_method === "zelle" ? "Zelle" : "Other"}
         </span>
-        <ActionButton action={markPaid.bind(null, s.id, null)} className="text-xs text-stone-400 hover:text-rose-700">
+        <ActionButton action={markPaid.bind(null, s.id, null)} className="text-xs text-ink/40 hover:text-wine">
           undo
         </ActionButton>
       </div>
@@ -191,7 +191,7 @@ function Payment({ s, now }: { s: SignupRow; now: number }) {
   const left = s.confirmed_at ? s.confirmed_at.getTime() + PAYMENT_WINDOW_MS - now : 0;
   return (
     <div className="space-y-1">
-      <div className={`whitespace-nowrap text-xs font-medium ${left < 0 ? "text-rose-700" : "text-amber-700"}`}>
+      <div className={`whitespace-nowrap text-xs font-medium ${left < 0 ? "text-wine" : "text-gold-deep"}`}>
         {left < 0 ? `Overdue by ${formatDuration(left)}` : `Unpaid · ${formatDuration(left)} left`}
       </div>
       <div className="flex gap-1">
@@ -207,7 +207,7 @@ function Person({ s }: { s: SignupRow }) {
   return (
     <Td>
       <div className="font-medium">{s.name}</div>
-      <div className="text-xs text-stone-500">{s.email}</div>
+      <div className="text-xs text-ink/55">{s.email}</div>
     </Td>
   );
 }
@@ -215,8 +215,8 @@ function Person({ s }: { s: SignupRow }) {
 function Section({ title, sub, children }: { title: string; sub?: string; children: React.ReactNode }) {
   return (
     <section className="mt-8">
-      <h2 className="text-lg font-semibold">
-        {title} {sub && <span className="ml-2 text-sm font-normal text-stone-500">{sub}</span>}
+      <h2 className="display text-2xl">
+        {title} {sub && <span className="ml-2 text-sm font-normal text-ink/55">{sub}</span>}
       </h2>
       {children}
     </section>
@@ -225,9 +225,9 @@ function Section({ title, sub, children }: { title: string; sub?: string; childr
 
 function Table({ head, children }: { head: string[]; children: React.ReactNode }) {
   return (
-    <div className="mt-2 overflow-x-auto rounded-xl border border-stone-200 bg-white">
+    <div className="mt-2 overflow-x-auto rounded-md border border-gold/50 bg-paper">
       <table className="w-full text-sm">
-        <thead className="bg-stone-50 text-left text-xs uppercase tracking-wide text-stone-500">
+        <thead className="bg-cream text-left text-xs uppercase tracking-wide text-ink/55">
           <tr>{head.map((h, i) => <th key={i} className="px-3 py-2 font-medium">{h}</th>)}</tr>
         </thead>
         <tbody>{children}</tbody>
@@ -241,5 +241,5 @@ function Td({ children, className = "" }: { children?: React.ReactNode; classNam
 }
 
 function Empty({ children }: { children: React.ReactNode }) {
-  return <p className="mt-2 text-sm text-stone-400">{children}</p>;
+  return <p className="mt-2 text-sm text-ink/40">{children}</p>;
 }

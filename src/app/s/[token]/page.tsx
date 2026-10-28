@@ -5,9 +5,10 @@ import { GROUPS, categoryLabel } from "@/lib/categories";
 import { getEventById, getSignupByToken, waitlistPosition } from "@/lib/signups";
 import { formatDateTime, requestTime } from "@/lib/time";
 import { emailEnabled } from "@/lib/email";
+import { MenuHeader } from "../../_components/Crest";
 import StatusLive from "./StatusLive";
 
-export const metadata = { title: "Your spot · Cocktail Club" };
+export const metadata = { title: "Your spot · SOM Cocktail Club" };
 
 export default async function StatusPage(props: PageProps<"/s/[token]">) {
   await connection();
@@ -18,39 +19,45 @@ export default async function StatusPage(props: PageProps<"/s/[token]">) {
   const event = (await getEventById(signup.event_id))!;
 
   return (
-    <main className="mx-auto w-full max-w-xl px-4 py-8">
-      <Link href={`/e/${event.slug}`} className="text-sm font-medium text-rose-700 hover:underline">
-        ← {event.name}
-      </Link>
-      {isNew && (
-        <p className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-900">
-          Thanks for signing up!{" "}
-          {emailEnabled ? (
-            <>We also emailed this page&apos;s link to <b>{signup.email}</b> so you can come back to it.</>
-          ) : (
-            <><b>Bookmark this page</b>: it&apos;s your private link to check your spot or give it up.</>
-          )}
-        </p>
-      )}
-      <div className="mt-4 text-sm text-stone-600">
-        {signup.name} · {categoryLabel(signup.category)} · {formatDateTime(event.starts_at)}
-      </div>
+    <main className="mx-auto w-full max-w-xl px-3 py-6 sm:py-12">
+      <div className="sheet">
+        <Link href={`/e/${event.slug}`} className="block">
+          <MenuHeader />
+        </Link>
+        <h1 className="display mt-3 text-center text-3xl">{event.name}</h1>
+        <div className="mt-1 text-center text-sm text-ink/65">
+          {signup.name} · {categoryLabel(signup.category)} · {formatDateTime(event.starts_at)}
+        </div>
+        {isNew && (
+          <p className="mt-5 rounded-md border border-gold/50 bg-paper p-3 text-center text-sm">
+            Thanks for signing up!{" "}
+            {emailEnabled ? (
+              <>We also emailed this page&apos;s link to <b>{signup.email}</b> so you can come back to it.</>
+            ) : (
+              <><b>Bookmark this page</b>: it&apos;s your private link to check your spot or give it up.</>
+            )}
+          </p>
+        )}
 
-      <StatusLive
-        token={token}
-        groupLabel={GROUPS[signup.group_key].label}
-        initial={{
-          status: signup.status,
-          position: await waitlistPosition(signup),
-          confirmedAt: signup.confirmed_at?.toISOString() ?? null,
-          paid: signup.paid,
-        }}
-        priceCents={event.price_cents}
-        venmoHandle={event.venmo_handle.replace(/^@/, "")}
-        zelleInfo={event.zelle_info}
-        eventName={event.name}
-        eventOver={event.starts_at.getTime() < requestTime()}
-      />
+        <StatusLive
+          token={token}
+          groupLabel={GROUPS[signup.group_key].label}
+          initial={{
+            status: signup.status,
+            position: await waitlistPosition(signup),
+            confirmedAt: signup.confirmed_at?.toISOString() ?? null,
+            paid: signup.paid,
+          }}
+          priceCents={event.price_cents}
+          venmoHandle={event.venmo_handle.replace(/^@/, "")}
+          zelleInfo={event.zelle_info}
+          eventName={event.name}
+          eventOver={event.starts_at.getTime() < requestTime()}
+        />
+        <Link href={`/e/${event.slug}`} className="mt-8 block text-center text-sm text-navy underline-offset-4 hover:underline">
+          See who&apos;s coming
+        </Link>
+      </div>
     </main>
   );
 }

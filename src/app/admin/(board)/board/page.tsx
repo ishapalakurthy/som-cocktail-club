@@ -17,14 +17,14 @@ export default async function BoardPage() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold">Board members</h1>
-      <p className="mt-1 text-sm text-stone-600">
+      <h1 className="display text-4xl">Board members</h1>
+      <p className="mt-1 text-sm text-ink/65">
         Everyone on this list has admin access: they sign in with their Yale email and password, manage events and
         rosters, and add or remove board members. No other email can sign in.
       </p>
-      <div className="mt-4 max-w-3xl overflow-hidden rounded-xl border border-stone-200 bg-white">
+      <div className="mt-4 max-w-3xl overflow-hidden rounded-md border border-gold/50 bg-paper">
         <table className="w-full text-sm">
-          <thead className="bg-stone-50 text-left text-xs uppercase tracking-wide text-stone-500">
+          <thead className="bg-cream text-left text-xs uppercase tracking-wide text-ink/55">
             <tr>
               <th className="px-4 py-2 font-medium">Name</th>
               <th className="px-4 py-2 font-medium">Yale email</th>
@@ -34,12 +34,12 @@ export default async function BoardPage() {
           </thead>
           <tbody>
             {members.map((m) => (
-              <tr key={m.id} className="border-t border-stone-100">
+              <tr key={m.id} className="border-t border-gold/25">
                 <td className="px-4 py-3 font-medium">
-                  {m.name} {m.id === me.id && <span className="text-xs font-normal text-stone-400">(you)</span>}
+                  {m.name} {m.id === me.id && <span className="text-xs font-normal text-ink/40">(you)</span>}
                 </td>
-                <td className="px-4 py-3 text-stone-700">{m.email}</td>
-                <td className="px-4 py-3 text-xs text-stone-500">
+                <td className="px-4 py-3 text-ink/80">{m.email}</td>
+                <td className="px-4 py-3 text-xs text-ink/55">
                   {formatDateTime(m.created_at)}
                   {m.added_by && <div>by {m.added_by}</div>}
                 </td>

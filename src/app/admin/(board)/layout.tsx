@@ -1,23 +1,32 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
+import Crest from "../../_components/Crest";
 import { logout } from "../actions";
 
 export default async function BoardLayout({ children }: LayoutProps<"/admin">) {
   const admin = await requireAdmin();
   return (
     <div className="flex min-h-full flex-col">
-      <header className="border-b border-stone-200 bg-white">
-        <nav className="mx-auto flex max-w-6xl items-center gap-5 px-4 py-3 text-sm">
-          <Link href="/admin" className="font-bold">🍸 Cocktail Club Board</Link>
-          <Link href="/admin" className="text-stone-600 hover:text-stone-900">Events</Link>
-          <Link href="/admin/board" className="text-stone-600 hover:text-stone-900">Board members</Link>
-          <span className="ml-auto text-stone-500">{admin.name}</span>
+      <header className="text-cream">
+        <nav className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-4 text-sm">
+          <Link href="/admin" className="flex items-center gap-3">
+            <Crest size={36} />
+            <span>
+              <span className="block text-[10px] uppercase tracking-[0.25em] text-gold">SOM Cocktail Club</span>
+              <span className="display block text-xl leading-none">Board</span>
+            </span>
+          </Link>
+          <Link href="/admin" className="text-cream/75 hover:text-cream">Events</Link>
+          <Link href="/admin/board" className="text-cream/75 hover:text-cream">Board members</Link>
+          <span className="ml-auto text-cream/60">{admin.name}</span>
           <form action={logout}>
-            <button className="text-stone-500 hover:text-rose-700">Log out</button>
+            <button className="text-cream/60 hover:text-cream">Log out</button>
           </form>
         </nav>
       </header>
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">{children}</main>
+      <main className="mx-auto w-full max-w-6xl flex-1 px-3 pb-10">
+        <div className="sheet min-h-[60vh]">{children}</div>
+      </main>
     </div>
   );
 }
