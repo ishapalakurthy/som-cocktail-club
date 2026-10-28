@@ -15,7 +15,6 @@ export default function StatusLive(props: {
   zelleInfo: string;
   eventName: string;
   eventOver: boolean;
-  emailEnabled: boolean;
 }) {
   const [s, setS] = useState(props.initial);
   const [pending, startTransition] = useTransition();
@@ -49,8 +48,8 @@ export default function StatusLive(props: {
         <div className="card border-amber-300 bg-amber-50">
           <div className="text-3xl font-bold text-amber-800">⏳ Waitlist #{s.position}</div>
           <div className="mt-1 text-amber-900">
-            {props.groupLabel} is full. If a spot opens up and you&apos;re moved in, this page will update
-            {props.emailEnabled ? " and we'll email you" : ", so check back"}. Don&apos;t pay unless you get a spot.
+            {props.groupLabel} is full. If a spot opens up and you&apos;re moved in, this page will update, so
+            check back. Don&apos;t pay unless you get a spot.
           </div>
         </div>
       )}

@@ -81,7 +81,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
       {openSpots > 0 && waitlist.length > 0 && (
         <div className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
           {openSpots} open {openSpots === 1 ? "spot" : "spots"}. Use <b>Move up</b> on the waitlist below to fill
-          {openSpots === 1 ? " it" : " them"} (they&apos;ll get an email).
+          {openSpots === 1 ? " it" : " them"}.
         </div>
       )}
       {openSpots < 0 && (
@@ -133,7 +133,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
                     confirm={
                       openSpots <= 0
                         ? `There are no open spots. Move ${s.name} up anyway (over capacity)?`
-                        : `Move ${s.name} into a confirmed spot? They'll get an email and have 24h to pay.`
+                        : `Move ${s.name} into a confirmed spot? They'll have 24h to pay.`
                     }
                   >
                     Move up

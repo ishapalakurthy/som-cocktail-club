@@ -50,7 +50,6 @@ export default async function StatusPage(props: PageProps<"/s/[token]">) {
         zelleInfo={event.zelle_info}
         eventName={event.name}
         eventOver={event.starts_at.getTime() < requestTime()}
-        emailEnabled={emailEnabled}
       />
     </main>
   );
