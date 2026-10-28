@@ -4,7 +4,7 @@
 @theme inline {
   --font-sans: var(--font-lato); /* Lato has no 500 weight: use font-bold (700) for emphasis */
   --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-cormorant);
+  --font-display: var(--font-newsreader);
 
   --color-navy: #00356b;      /* Yale blue: buttons, crest */
   --color-navy-deep: #00284f; /* page background */
@@ -35,7 +35,7 @@ body {
     @apply border-t border-dashed border-gold;
   }
   .eyebrow {
-    @apply text-[11px] font-bold uppercase tracking-[0.25em] text-gold-deep;
+    @apply text-xs font-bold uppercase tracking-[0.2em] text-gold-deep;
   }
   .display {
     @apply font-display font-medium tracking-tight lining-nums;

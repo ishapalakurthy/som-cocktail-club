@@ -6,6 +6,11 @@ import { formatDateTime, requestTime } from "@/lib/time";
 import { MenuHeader } from "../../_components/Crest";
 import EventLive from "./EventLive";
 
+// "$20" for whole dollars, "$12.50" otherwise.
+function formatPrice(cents: number) {
+  return `$${cents % 100 === 0 ? cents / 100 : (cents / 100).toFixed(2)}`;
+}
+
 export async function generateMetadata(props: PageProps<"/e/[slug]">) {
   const { slug } = await props.params;
   const event = await getEventBySlug(slug);
@@ -24,16 +29,13 @@ export default async function EventPage(props: PageProps<"/e/[slug]">) {
         <Link href="/" className="block">
           <MenuHeader />
         </Link>
-        <h1 className="display mt-4 text-center text-5xl leading-tight">{event.name}</h1>
-        <div className="mt-3 flex flex-wrap justify-center gap-x-3 gap-y-1 text-sm text-ink/75">
-          <span>{formatDateTime(event.starts_at)}</span>
-          <span className="text-gold">◆</span>
-          <span>{event.location}</span>
-          <span className="text-gold">◆</span>
-          <span>${(event.price_cents / 100).toFixed(2)}, due within 24h of getting a spot</span>
+        <h1 className="display mt-3 text-center text-5xl font-semibold leading-tight sm:text-6xl">{event.name}</h1>
+        <div className="mt-4 text-center text-lg font-bold">
+          {formatDateTime(event.starts_at)} / {formatPrice(event.price_cents)}
         </div>
+        <div className="mt-1 text-center text-ink/65">{event.location}</div>
         {event.description && (
-          <p className="display mx-auto mt-5 max-w-md whitespace-pre-line text-center text-lg italic text-ink/80">
+          <p className="mx-auto mt-5 max-w-md whitespace-pre-line text-center text-lg leading-relaxed text-ink/80">
             {event.description}
           </p>
         )}

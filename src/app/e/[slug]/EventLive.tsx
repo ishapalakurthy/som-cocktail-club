@@ -52,20 +52,18 @@ export default function EventLive(props: {
   return (
     <>
       <section className="mt-8">
-        <h2 className="eyebrow text-center">Spots</h2>
-        <div className="rule mt-3" />
+        <div className="rule" />
         {GROUP_KEYS.map((g) => {
           const r = roster[g];
           const left = Math.max(0, r.cap - r.confirmed.length);
           return (
             <div key={g} className="flex items-baseline gap-3 border-b border-dashed border-gold py-3">
-              <div>
-                <div className="text-lg">{GROUPS[g].label}</div>
+              <div className="flex-1">
+                <div className="text-lg">{GROUPS[g].short}</div>
                 <div className="text-xs text-ink/55">
-                  {r.confirmed.length}/{r.cap} taken · {r.waitlist.length} on waitlist
+                  {GROUPS[g].label} · {r.confirmed.length}/{r.cap} taken · {r.waitlist.length} on waitlist
                 </div>
               </div>
-              <span className="flex-1 translate-y-[-6px] border-b border-dotted border-gold/70" />
               {left > 0 ? (
                 <span className="text-xl font-bold text-pine">{left} {left === 1 ? "spot" : "spots"} left</span>
               ) : (
