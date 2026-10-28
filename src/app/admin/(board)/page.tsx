@@ -25,12 +25,12 @@ export default async function AdminHome(props: PageProps<"/admin">) {
         <h1 className="display text-4xl font-semibold">{showArchived ? "Archived events" : "Events"}</h1>
         <Link href="/admin/events/new" className="btn-primary">+ New event</Link>
       </div>
-      <div className="mt-6 grid gap-3">
-        {events.length === 0 && <p className="text-ink/55">No events yet.</p>}
+      <div className="mt-6 border-t border-dashed border-gold">
+        {events.length === 0 && <p className="py-4 text-ink/55">No events yet.</p>}
         {events.map((e) => {
           const confirmed = e.confirmed_first + e.confirmed_second;
           return (
-            <Link key={e.id} href={`/admin/events/${e.id}`} className="card flex flex-wrap items-center gap-x-8 gap-y-2 hover:border-gold">
+            <Link key={e.id} href={`/admin/events/${e.id}`} className="flex flex-wrap items-center gap-x-8 gap-y-2 border-b border-dashed border-gold py-4 hover:text-navy">
               <div className="min-w-56 flex-1">
                 <div className="display text-2xl font-semibold">{e.name}</div>
                 <div className="text-sm font-medium">{formatDateTime(e.starts_at)}</div>

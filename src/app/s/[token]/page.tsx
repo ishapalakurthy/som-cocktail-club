@@ -26,7 +26,7 @@ export default async function StatusPage(props: PageProps<"/s/[token]">) {
         </Link>
         <h1 className="display mt-3 text-center text-3xl">{event.name}</h1>
         {isNew && (
-          <p className="mt-5 rounded-md border border-gold/50 bg-paper p-3 text-center text-sm">
+          <p className="mx-auto mt-4 max-w-sm text-center text-sm">
             Thanks for signing up!{" "}
             {emailEnabled ? (
               <>We also emailed this page&apos;s link to <b>{signup.email}</b> so you can come back to it.</>

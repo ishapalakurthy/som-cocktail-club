@@ -80,13 +80,13 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
       </div>
 
       {openSpots > 0 && waitlist.length > 0 && (
-        <div className="mt-4 rounded-lg border border-gold bg-gold/10 p-3 text-sm text-ink">
+        <div className="mt-4 text-sm font-bold text-gold-deep">
           {openSpots} open {openSpots === 1 ? "spot" : "spots"}. Use <b>Move up</b> on the waitlist below to fill
           {openSpots === 1 ? " it" : " them"}.
         </div>
       )}
       {openSpots < 0 && (
-        <div className="mt-4 rounded-lg border border-gold bg-cream p-3 text-sm text-ink/80">
+        <div className="mt-4 text-sm font-bold text-wine">
           {-openSpots} over capacity.
         </div>
       )}
@@ -180,7 +180,7 @@ function Payment({ s, now }: { s: SignupRow; now: number }) {
   if (s.paid) {
     return (
       <div className="flex items-center gap-2 whitespace-nowrap">
-        <span className="rounded-full bg-pine/10 px-2 py-0.5 text-xs font-bold text-pine">
+        <span className="text-xs font-bold text-pine">
           Paid · {s.payment_method === "venmo" ? "Venmo" : s.payment_method === "zelle" ? "Zelle" : "Other"}
         </span>
         <ActionButton action={markPaid.bind(null, s.id, null)} className="text-xs text-ink/40 hover:text-wine">
@@ -226,7 +226,7 @@ function Section({ title, sub, children }: { title: string; sub?: string; childr
 
 function Table({ head, children }: { head: string[]; children: React.ReactNode }) {
   return (
-    <div className="mt-2 overflow-x-auto rounded-md border border-gold/50 bg-paper">
+    <div className="mt-2 overflow-x-auto border-y border-gold/60">
       <table className="w-full text-sm">
         <thead className="bg-cream text-left text-xs uppercase tracking-wide text-ink/55">
           <tr>{head.map((h, i) => <th key={i} className="px-3 py-2 font-bold">{h}</th>)}</tr>

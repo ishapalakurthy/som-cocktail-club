@@ -165,7 +165,7 @@ function SignupForm({ slug }: { slug: string }) {
         <Ack name="ack2" checked={v.ack2 === "on"}>If I get a spot, I will Venmo / Zelle within 24 hours.</Ack>
         <Ack name="ack3" checked={v.ack3 === "on"}>If I do not pay within that time period, my seat may be given to another person.</Ack>
       </fieldset>
-      {state.error && <p className="rounded-md border border-wine/30 bg-wine/5 p-3 text-sm text-wine">{state.error}</p>}
+      {state.error && <p className="text-sm font-bold text-wine">{state.error}</p>}
       <button className="btn-primary w-full py-3 text-base" disabled={pending}>
         {pending ? "Reserving…" : "Reserve my spot"}
       </button>

@@ -98,7 +98,7 @@ export default function EventForm({ eventId, initial }: { eventId: string | null
           <input id="zelle_info" name="zelle_info" required className="input" defaultValue={v.zelle_info} />
         </div>
       </div>
-      {state.error && <p className="rounded-lg bg-wine/5 p-3 text-sm text-wine">{state.error}</p>}
+      {state.error && <p className="text-sm font-bold text-wine">{state.error}</p>}
       <button className="btn-primary" disabled={pending}>{pending ? "Saving…" : eventId ? "Save changes" : "Create event"}</button>
     </form>
   );

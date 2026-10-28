@@ -5,9 +5,8 @@ import { formatPrice } from "@/lib/format";
 import { formatDateTime, PAYMENT_WINDOW_MS } from "@/lib/time";
 import { withdraw } from "./actions";
 
-// Venmo and Zelle are shown as matching tiles; Venmo opens the app, Zelle copies the number.
-const PAY_TILE =
-  "flex flex-col items-center rounded-md border border-navy/30 bg-cream px-4 py-3 text-center text-ink transition hover:border-navy hover:bg-paper";
+// Venmo and Zelle are matching menu lines; Venmo opens the app, Zelle copies the number.
+const PAY_ROW = "flex w-full items-baseline gap-3 border-b border-dashed border-gold py-3 text-left text-lg hover:text-navy";
 
 type Status = { status: "confirmed" | "waitlist" | "removed"; position: number | null; confirmedAt: string | null; paid: boolean };
 
@@ -71,48 +70,50 @@ export default function StatusLive(props: {
       <div className="rule" />
 
       {s.status === "confirmed" && (
-        <div className="card">
-          <h2 className="eyebrow">Payment</h2>
+        <section>
+          <h2 className="display text-center text-2xl">Payment</h2>
           {s.paid ? (
-            <p className="display mt-2 text-2xl text-pine">Payment received. Thank you!</p>
+            <p className="mt-2 text-center text-pine">Payment received. Thank you!</p>
           ) : (
             <>
-              <p className="mt-2 text-sm">
+              <p className="mx-auto mt-2 max-w-sm text-center text-sm">
                 {props.priceCents > 0 && <>Please send <b>{formatPrice(props.priceCents)}</b> </>}
                 {s.confirmedAt && <>by <b>{formatDateTime(new Date(new Date(s.confirmedAt).getTime() + PAYMENT_WINDOW_MS))}</b></>}
                 , or your spot may go to the next person on the waitlist.
               </p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="mt-5 border-t border-dashed border-gold">
                 {venmoUrl && (
-                  <a href={venmoUrl} target="_blank" rel="noreferrer" className={PAY_TILE}>
-                    <span className="eyebrow text-navy">Venmo</span>
-                    <span className="mt-1 text-lg font-bold">@{props.venmoHandle}</span>
+                  <a href={venmoUrl} target="_blank" rel="noreferrer" className={PAY_ROW}>
+                    <span>Venmo</span>
+                    <span className="flex-1 translate-y-[-5px] border-b border-dotted border-gold/70" />
+                    <span className="font-bold">@{props.venmoHandle}</span>
                   </a>
                 )}
                 {props.zelleInfo && (
                   <button
                     type="button"
-                    className={PAY_TILE}
+                    className={PAY_ROW}
                     onClick={async () => {
                       await navigator.clipboard.writeText(props.zelleInfo);
                       setCopied(true);
                       setTimeout(() => setCopied(false), 2000);
                     }}
                   >
-                    <span className="eyebrow text-navy">{copied ? "Copied" : "Zelle"}</span>
-                    <span className="mt-1 text-lg font-bold">{props.zelleInfo}</span>
+                    <span>Zelle</span>
+                    <span className="flex-1 translate-y-[-5px] border-b border-dotted border-gold/70" />
+                    <span className="font-bold">{copied ? "Copied" : props.zelleInfo}</span>
                   </button>
                 )}
               </div>
             </>
           )}
-        </div>
+        </section>
       )}
 
       {s.status !== "removed" && !props.eventOver && (
         <div className="pt-2 text-center">
           <button
-            className="text-sm text-ink underline underline-offset-4 hover:text-wine"
+            className="text-sm font-bold text-wine underline underline-offset-4 hover:text-ink"
             disabled={pending}
             onClick={() => {
               const msg =
@@ -125,7 +126,7 @@ export default function StatusLive(props: {
                 });
             }}
           >
-            {pending ? "Removing…" : s.status === "confirmed" ? "I can't make it, give up my spot" : "Leave the waitlist"}
+            {pending ? "Removing…" : s.status === "confirmed" ? "Give up my spot" : "Leave the waitlist"}
           </button>
         </div>
       )}

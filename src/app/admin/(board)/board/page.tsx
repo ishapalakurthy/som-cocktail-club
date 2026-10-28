@@ -22,7 +22,7 @@ export default async function BoardPage() {
         Everyone on this list has admin access: they sign in with their Yale email and password, manage events and
         rosters, and add or remove leads. No other email can sign in.
       </p>
-      <div className="mt-4 max-w-3xl overflow-hidden rounded-md border border-gold/50 bg-paper">
+      <div className="mt-4 max-w-3xl overflow-hidden border-y border-gold/60">
         <table className="w-full text-sm">
           <thead className="bg-cream text-left text-xs uppercase tracking-wide text-ink/55">
             <tr>
