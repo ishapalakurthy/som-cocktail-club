@@ -30,7 +30,7 @@ export default async function EventPage(props: PageProps<"/e/[slug]">) {
           <MenuHeader />
         </Link>
         <h1 className="display mt-3 text-center text-5xl font-semibold leading-tight sm:text-6xl">{event.name}</h1>
-        <div className="mt-4 text-center text-lg font-bold">
+        <div className="mt-4 text-center text-lg font-medium">
           {formatDateTime(event.starts_at)} / {formatPrice(event.price_cents)}
         </div>
         <div className="mt-1 text-center text-ink/65">{event.location}</div>

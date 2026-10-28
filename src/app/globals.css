@@ -2,7 +2,7 @@
 
 /* "Cocktail menu card" theme: cream paper menus on Yale navy, with brass-gold rules. */
 @theme inline {
-  --font-sans: var(--font-lato); /* Lato has no 500 weight: use font-bold (700) for emphasis */
+  --font-sans: var(--font-dm-sans);
   --font-mono: var(--font-geist-mono);
   --font-display: var(--font-newsreader);
 
