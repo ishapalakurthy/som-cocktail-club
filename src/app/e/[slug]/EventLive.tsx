@@ -58,12 +58,7 @@ export default function EventLive(props: {
           const left = Math.max(0, r.cap - r.confirmed.length);
           return (
             <div key={g} className="flex items-baseline gap-3 border-b border-dashed border-gold py-3">
-              <div className="flex-1">
-                <div className="text-lg">{GROUPS[g].short}</div>
-                <div className="text-xs text-ink/55">
-                  {GROUPS[g].label} · {r.confirmed.length}/{r.cap} taken · {r.waitlist.length} on waitlist
-                </div>
-              </div>
+              <div className="flex-1 text-lg">{GROUPS[g].label}</div>
               {left > 0 ? (
                 <span className="text-xl font-bold text-pine">{left} {left === 1 ? "spot" : "spots"} left</span>
               ) : (
