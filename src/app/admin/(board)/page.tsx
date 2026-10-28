@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { sql, type EventRow } from "@/lib/db";
-import { formatPrice } from "@/lib/format";
 import { formatDateTime } from "@/lib/time";
 
 export const metadata = { title: "Events · Cocktail Club Board" };
@@ -34,7 +33,7 @@ export default async function AdminHome(props: PageProps<"/admin">) {
             <Link key={e.id} href={`/admin/events/${e.id}`} className="card flex flex-wrap items-center gap-x-8 gap-y-2 hover:border-gold">
               <div className="min-w-56 flex-1">
                 <div className="display text-2xl font-semibold">{e.name}</div>
-                <div className="text-sm font-medium">{formatDateTime(e.starts_at)} / {formatPrice(e.price_cents)}</div>
+                <div className="text-sm font-medium">{formatDateTime(e.starts_at)}</div>
                 <div className="text-sm text-ink/65">📍 {e.location}</div>
               </div>
               <Stat label="1st Years" value={`${e.confirmed_first}/${e.cap_first}`} />
