@@ -86,7 +86,7 @@ export default function EventLive(props: {
       </section>
 
       <section className="mt-10">
-        <h2 className="heading text-center">Who&apos;s coming</h2>
+        <h2 className="heading text-center">Who&apos;s Coming</h2>
         <div className="mt-4 grid gap-x-8 gap-y-6 sm:grid-cols-2">
           {GROUP_KEYS.map((g) => (
             <div key={g}>
@@ -135,7 +135,7 @@ function SignupForm({ slug }: { slug: string }) {
 
   return (
     <form action={action} className="space-y-4">
-      <h2 className="heading text-center">Reserve your spot</h2>
+      <h2 className="heading text-center">Reserve Your Spot</h2>
       <div>
         <label className="label" htmlFor="name">Your name *</label>
         <input id="name" name="name" required className="input" defaultValue={v.name} autoComplete="name" />
