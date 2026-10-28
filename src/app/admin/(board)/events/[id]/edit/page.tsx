@@ -21,7 +21,7 @@ export default async function EditEventPage(props: PageProps<"/admin/events/[id]
           location: e.location,
           starts_at: toLocalInput(e.starts_at),
           opens_at: toLocalInput(e.opens_at),
-          price: e.price_cents ? (e.price_cents / 100).toFixed(2) : "",
+          price: (e.price_cents / 100).toFixed(2),
           venmo_handle: e.venmo_handle,
           zelle_info: e.zelle_info,
           cap_first: String(e.cap_first),

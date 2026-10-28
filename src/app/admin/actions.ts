@@ -18,7 +18,12 @@ import {
 } from "@/lib/signups";
 import { fromLocalInput } from "@/lib/time";
 
-export type FormState = { error?: string; ok?: string };
+export type FormState = { error?: string; ok?: string; values?: Record<string, string> };
+
+// What was typed, so a form can be refilled instead of cleared when there's an error.
+function typedValues(form: FormData) {
+  return Object.fromEntries([...form].filter(([k]) => !k.startsWith("$")).map(([k, v]) => [k, String(v)]));
+}
 
 // ---------- Sign in ----------
 
@@ -44,6 +49,11 @@ export async function logout() {
 // ---------- Events ----------
 
 export async function saveEvent(eventId: string | null, _prev: FormState, form: FormData): Promise<FormState> {
+  const result = await validateAndSaveEvent(eventId, form);
+  return { ...result, values: typedValues(form) };
+}
+
+async function validateAndSaveEvent(eventId: string | null, form: FormData): Promise<FormState> {
   await requireAdmin();
   const get = (k: string) => String(form.get(k) ?? "").trim();
 
@@ -53,7 +63,7 @@ export async function saveEvent(eventId: string | null, _prev: FormState, form: 
   const opensAt = get("opens_at");
   const capFirst = Number(get("cap_first"));
   const capSecond = Number(get("cap_second"));
-  const price = Number(get("price") || "0");
+  const price = Number(get("price"));
 
   if (!name) return { error: "Event name is required." };
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) {
@@ -63,7 +73,11 @@ export async function saveEvent(eventId: string | null, _prev: FormState, form: 
   if (![capFirst, capSecond].every((n) => Number.isInteger(n) && n >= 0)) {
     return { error: "Capacities must be whole numbers (0 or more)." };
   }
-  if (!(price >= 0)) return { error: "Price must be a number." };
+  if (!get("location")) return { error: "Location is required." };
+  if (!get("description")) return { error: "Description is required." };
+  if (!get("price") || !(price >= 0)) return { error: "Price is required (enter 0 if it's free)." };
+  if (!get("venmo_handle").replace(/^@/, "")) return { error: "Venmo username is required." };
+  if (!get("zelle_info")) return { error: "Zelle phone/email is required." };
 
   const values = {
     name,

@@ -5,9 +5,16 @@ import { CATEGORIES } from "@/lib/categories";
 import { emailEnabled, sendSignupEmail } from "@/lib/email";
 import { createSignup, DuplicateSignupError, getEventBySlug, waitlistPosition } from "@/lib/signups";
 
-export type SignupState = { error?: string };
+export type SignupState = { error?: string; values?: Record<string, string> };
 
 export async function signUp(slug: string, _prev: SignupState, form: FormData): Promise<SignupState> {
+  const result = await validateAndSignUp(slug, form);
+  // Send back what was typed so the form is refilled, not cleared, after an error.
+  const values = Object.fromEntries([...form].filter(([k]) => !k.startsWith("$")).map(([k, v]) => [k, String(v)]));
+  return { ...result, values };
+}
+
+async function validateAndSignUp(slug: string, form: FormData): Promise<SignupState> {
   const event = await getEventBySlug(slug);
   if (!event || event.archived) return { error: "This event no longer exists." };
 

@@ -72,9 +72,6 @@ export default function EventLive(props: {
           );
         })}
       </div>
-      <p className="mt-2 flex items-center gap-1.5 text-xs text-stone-500">
-        <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-500" /> Live, updates automatically
-      </p>
 
       <section className="card mt-6">
         {notYet ? (
@@ -135,24 +132,25 @@ function formatCountdown(ms: number) {
 
 function SignupForm({ slug }: { slug: string }) {
   const [state, action, pending] = useActionState(signUp.bind(null, slug), {});
+  const v = state.values ?? {};
 
   return (
     <form action={action} className="space-y-4">
       <h2 className="text-xl font-semibold">Sign up</h2>
       <div>
         <label className="label" htmlFor="name">Your name *</label>
-        <input id="name" name="name" required className="input" autoComplete="name" />
+        <input id="name" name="name" required className="input" defaultValue={v.name} autoComplete="name" />
       </div>
       <div>
         <label className="label" htmlFor="email">Yale email * <span className="font-normal text-stone-500">(partners: use your partner&apos;s email)</span></label>
-        <input id="email" name="email" type="email" required className="input" placeholder="you@yale.edu" autoComplete="email" />
+        <input id="email" name="email" type="email" required className="input" defaultValue={v.email} placeholder="you@yale.edu" autoComplete="email" />
       </div>
       <fieldset>
         <legend className="label">Which best describes you? *</legend>
         <div className="space-y-1.5">
           {CATEGORIES.map((c) => (
             <label key={c.key} className="flex items-center gap-2 text-sm">
-              <input type="radio" name="category" value={c.key} required className="accent-rose-700" />
+              <input type="radio" name="category" value={c.key} required className="accent-rose-700" defaultChecked={v.category === c.key} />
               {c.label}
             </label>
           ))}
@@ -160,13 +158,13 @@ function SignupForm({ slug }: { slug: string }) {
       </fieldset>
       <div>
         <label className="label" htmlFor="dietary">Dietary restrictions</label>
-        <input id="dietary" name="dietary" className="input" />
+        <input id="dietary" name="dietary" className="input" defaultValue={v.dietary} />
       </div>
       <fieldset className="space-y-1.5 rounded-lg bg-stone-50 p-3 text-sm">
         <legend className="label">By signing up, you acknowledge: *</legend>
-        <Ack name="ack1">I will check this page to confirm whether I have received a spot at the event.</Ack>
-        <Ack name="ack2">If I get a spot, I will Venmo / Zelle within 24 hours.</Ack>
-        <Ack name="ack3">If I do not pay within that time period, my seat may be given to another person.</Ack>
+        <Ack name="ack1" checked={v.ack1 === "on"}>I will check this page to confirm whether I have received a spot at the event.</Ack>
+        <Ack name="ack2" checked={v.ack2 === "on"}>If I get a spot, I will Venmo / Zelle within 24 hours.</Ack>
+        <Ack name="ack3" checked={v.ack3 === "on"}>If I do not pay within that time period, my seat may be given to another person.</Ack>
       </fieldset>
       {state.error && <p className="rounded-lg bg-rose-50 p-3 text-sm text-rose-800">{state.error}</p>}
       <button className="btn-primary w-full py-3 text-base" disabled={pending}>
@@ -176,10 +174,10 @@ function SignupForm({ slug }: { slug: string }) {
   );
 }
 
-function Ack({ name, children }: { name: string; children: React.ReactNode }) {
+function Ack({ name, checked, children }: { name: string; checked: boolean; children: React.ReactNode }) {
   return (
     <label className="flex items-start gap-2">
-      <input type="checkbox" name={name} required className="mt-0.5 accent-rose-700" />
+      <input type="checkbox" name={name} required className="mt-0.5 accent-rose-700" defaultChecked={checked} />
       <span>{children}</span>
     </label>
   );
