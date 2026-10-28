@@ -33,7 +33,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
       <Link href="/admin" className="text-sm text-ink/55 hover:underline">← All events</Link>
       <div className="mt-2 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="display text-4xl font-semibold">{event.name}</h1>
+          <h1 className="title">{event.name}</h1>
           <div className="mt-1 font-medium">
             {formatDateTime(event.starts_at)} / {formatPrice(event.price_cents)}
           </div>
@@ -216,7 +216,7 @@ function Person({ s }: { s: SignupRow }) {
 function Section({ title, sub, children }: { title: string; sub?: string; children: React.ReactNode }) {
   return (
     <section className="mt-8">
-      <h2 className="display text-2xl">
+      <h2 className="heading">
         {title} {sub && <span className="ml-2 text-sm font-normal text-ink/55">{sub}</span>}
       </h2>
       {children}

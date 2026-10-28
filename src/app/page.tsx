@@ -14,7 +14,7 @@ export default async function Home() {
     <main className="mx-auto w-full max-w-2xl px-3 py-6 sm:py-12">
       <div className="sheet">
         <MenuHeader />
-        <h1 className="display mt-4 text-center text-5xl">Upcoming events</h1>
+        <h1 className="title mt-4 text-center">Upcoming events</h1>
         <div className="rule mt-8" />
         {events.length === 0 && <p className="py-8 text-center text-ink/60">No upcoming events yet. Check back soon.</p>}
         {events.map((e) => (
@@ -23,7 +23,7 @@ export default async function Home() {
             href={`/e/${e.slug}`}
             className="flex items-baseline gap-3 border-b border-dashed border-gold py-4 hover:text-navy"
           >
-            <span className="display text-2xl">{e.name}</span>
+            <span className="heading">{e.name}</span>
             <span className="flex-1 translate-y-[-4px] border-b border-dotted border-gold/70" />
             <span className="text-sm text-ink/70">{formatDateTime(e.starts_at)}</span>
           </Link>

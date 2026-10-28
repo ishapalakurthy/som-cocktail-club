@@ -22,7 +22,7 @@ export default async function AdminHome(props: PageProps<"/admin">) {
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="display text-4xl font-semibold">{showArchived ? "Archived events" : "Events"}</h1>
+        <h1 className="title">{showArchived ? "Archived events" : "Events"}</h1>
         <Link href="/admin/events/new" className="btn-primary">+ New event</Link>
       </div>
       <div className="mt-6 border-t border-dashed border-gold">
@@ -32,7 +32,7 @@ export default async function AdminHome(props: PageProps<"/admin">) {
           return (
             <Link key={e.id} href={`/admin/events/${e.id}`} className="flex flex-wrap items-center gap-x-8 gap-y-2 border-b border-dashed border-gold py-4 hover:text-navy">
               <div className="min-w-56 flex-1">
-                <div className="display text-2xl font-semibold">{e.name}</div>
+                <div className="heading">{e.name}</div>
                 <div className="text-sm font-medium">{formatDateTime(e.starts_at)}</div>
                 <div className="text-sm text-ink/65">📍 {e.location}</div>
               </div>
@@ -54,7 +54,7 @@ export default async function AdminHome(props: PageProps<"/admin">) {
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="text-center">
-      <div className="display text-2xl tabular-nums">{value}</div>
+      <div className="heading tabular-nums">{value}</div>
       <div className="text-xs text-ink/55">{label}</div>
     </div>
   );

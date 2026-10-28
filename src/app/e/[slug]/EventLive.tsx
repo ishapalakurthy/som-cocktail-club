@@ -58,11 +58,11 @@ export default function EventLive(props: {
           const left = Math.max(0, r.cap - r.confirmed.length);
           return (
             <div key={g} className="flex items-baseline gap-3 border-b border-dashed border-gold py-3">
-              <div className="flex-1 text-lg">{GROUPS[g].label}</div>
+              <div className="flex-1">{GROUPS[g].label}</div>
               {left > 0 ? (
-                <span className="text-xl font-bold text-pine">{left} {left === 1 ? "spot" : "spots"} left</span>
+                <span className="font-bold text-pine">{left} {left === 1 ? "spot" : "spots"} left</span>
               ) : (
-                <span className="text-xl font-bold text-wine">Full</span>
+                <span className="font-bold text-wine">Full</span>
               )}
             </div>
           );
@@ -74,19 +74,19 @@ export default function EventLive(props: {
           <div className="py-6 text-center">
             <div className="eyebrow">Signups open</div>
             <div className="mt-1 text-sm text-ink/70">{formatDateTime(props.opensAt)}</div>
-            <div className="display mt-3 text-6xl tabular-nums text-navy">
+            <div className="title mt-3 tabular-nums text-navy">
               {formatCountdown(props.opensAt - currentNow)}
             </div>
           </div>
         ) : isOpen ? (
           <SignupForm slug={props.slug} />
         ) : (
-          <p className="display py-4 text-center text-xl text-ink/70">Signups for this event are closed.</p>
+          <p className="heading py-4 text-center">Signups for this event are closed.</p>
         )}
       </section>
 
       <section className="mt-10">
-        <h2 className="display text-center text-3xl">Who&apos;s coming</h2>
+        <h2 className="heading text-center">Who&apos;s coming</h2>
         <div className="mt-4 grid gap-x-8 gap-y-6 sm:grid-cols-2">
           {GROUP_KEYS.map((g) => (
             <div key={g}>
@@ -109,7 +109,7 @@ export default function EventLive(props: {
 function NameList({ names, empty, muted }: { names: string[]; empty?: string; muted?: boolean }) {
   if (names.length === 0) return <p className="mt-2 text-sm italic text-ink/40">{empty}</p>;
   return (
-    <ol className={`mt-2 space-y-1 text-[15px] ${muted ? "text-ink/55" : ""}`}>
+    <ol className={`mt-2 space-y-1 ${muted ? "text-ink/55" : ""}`}>
       {names.map((n, i) => (
         <li key={i} className="flex gap-3">
           <span className="w-5 text-right tabular-nums text-gold-deep">{i + 1}</span>
@@ -135,7 +135,7 @@ function SignupForm({ slug }: { slug: string }) {
 
   return (
     <form action={action} className="space-y-4">
-      <h2 className="display text-center text-3xl">Reserve your spot</h2>
+      <h2 className="heading text-center">Reserve your spot</h2>
       <div>
         <label className="label" htmlFor="name">Your name *</label>
         <input id="name" name="name" required className="input" defaultValue={v.name} autoComplete="name" />
@@ -166,7 +166,7 @@ function SignupForm({ slug }: { slug: string }) {
         <Ack name="ack3" checked={v.ack3 === "on"}>If I do not pay within that time period, my seat may be given to another person.</Ack>
       </fieldset>
       {state.error && <p className="text-sm font-bold text-wine">{state.error}</p>}
-      <button className="btn-primary w-full py-3 text-base" disabled={pending}>
+      <button className="btn-primary w-full py-3" disabled={pending}>
         {pending ? "Reserving…" : "Reserve my spot"}
       </button>
     </form>

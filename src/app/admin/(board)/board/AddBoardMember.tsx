@@ -7,7 +7,7 @@ export default function AddBoardMember() {
   const [state, action, pending] = useActionState(addBoardMember, {});
   return (
     <form action={action} className="card mt-6 max-w-3xl">
-      <h2 className="display text-2xl">Add a lead</h2>
+      <h2 className="heading">Add a lead</h2>
       <div className="mt-3 flex flex-wrap gap-2">
         <input name="name" placeholder="Name" required className="input max-w-56" />
         <input name="email" type="email" placeholder="first.last@yale.edu" required className="input max-w-64" />

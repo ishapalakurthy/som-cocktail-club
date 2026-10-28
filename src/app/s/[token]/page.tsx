@@ -24,7 +24,7 @@ export default async function StatusPage(props: PageProps<"/s/[token]">) {
         <Link href={`/e/${event.slug}`} className="block">
           <MenuHeader />
         </Link>
-        <h1 className="display mt-3 text-center text-3xl">{event.name}</h1>
+        <h1 className="heading mt-3 text-center">{event.name}</h1>
         {isNew && (
           <p className="mx-auto mt-4 max-w-sm text-center text-sm">
             Thanks for signing up!{" "}

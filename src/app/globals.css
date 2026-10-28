@@ -3,7 +3,6 @@
 /* "Cocktail menu card" theme: cream paper menus on Yale navy, with brass-gold rules. */
 @theme inline {
   --font-sans: var(--font-dm-sans);
-  --font-mono: var(--font-geist-mono);
   --font-display: var(--font-newsreader);
 
   --color-navy: #00356b;      /* Yale blue: buttons, crest */
@@ -37,8 +36,17 @@ body {
   .eyebrow {
     @apply text-xs font-bold uppercase tracking-[0.2em] text-gold-deep;
   }
-  .display {
-    @apply font-display font-medium tracking-tight lining-nums;
+  /* Type scale. Headings are Newsreader; everything else is DM Sans.
+     title    page title (one per page)         36px / 48px on wider screens
+     heading  section heading, event names      24px
+     body     main text                         16px (default)
+     small    labels, buttons, tables, notes    14px (text-sm)
+     eyebrow  small caps labels, table meta     12px (text-xs) */
+  .title {
+    @apply font-display text-4xl leading-tight font-semibold tracking-tight lining-nums sm:text-5xl;
+  }
+  .heading {
+    @apply font-display text-2xl leading-snug font-medium tracking-tight lining-nums;
   }
   .btn-primary {
     @apply inline-flex items-center justify-center rounded-sm bg-navy px-4 py-2 text-sm font-bold text-cream transition hover:bg-navy-deep disabled:cursor-not-allowed disabled:opacity-50;

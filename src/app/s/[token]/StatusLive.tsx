@@ -6,7 +6,7 @@ import { formatDateTime, PAYMENT_WINDOW_MS } from "@/lib/time";
 import { withdraw } from "./actions";
 
 // Venmo and Zelle are matching menu lines; Venmo opens the app, Zelle copies the number.
-const PAY_ROW = "flex w-full items-baseline gap-3 border-b border-dashed border-gold py-3 text-left text-lg hover:text-navy";
+const PAY_ROW = "flex w-full items-baseline justify-between gap-3 border-b border-dashed border-gold py-3 text-left hover:text-navy";
 
 type Status = { status: "confirmed" | "waitlist" | "removed"; position: number | null; confirmedAt: string | null; paid: boolean };
 
@@ -48,13 +48,13 @@ export default function StatusLive(props: {
       {s.status === "confirmed" && (
         <div className="py-2 text-center">
           <div className="eyebrow text-pine">Confirmed</div>
-          <div className="display mt-4 text-5xl text-pine">You&apos;re in, {props.firstName}</div>
+          <div className="title mt-4 text-pine">You&apos;re in, {props.firstName}</div>
         </div>
       )}
       {s.status === "waitlist" && (
         <div className="py-2 text-center">
           <div className="eyebrow">Waitlist</div>
-          <div className="display mt-4 text-5xl text-gold-deep">No. {s.position}</div>
+          <div className="title mt-4 text-gold-deep">No. {s.position}</div>
           <div className="mx-auto mt-2 max-w-sm text-sm">
             {props.groupLabel} is full. If a spot opens up and you&apos;re moved in, this page will update, so
             check back. Don&apos;t pay unless you get a spot.
@@ -63,7 +63,7 @@ export default function StatusLive(props: {
       )}
       {s.status === "removed" && (
         <div className="py-2 text-center">
-          <div className="display text-4xl">No longer signed up</div>
+          <div className="title">No longer signed up</div>
           <div className="mt-2 text-sm">Your spot has been released. Message the board if this is a mistake.</div>
         </div>
       )}
@@ -71,7 +71,7 @@ export default function StatusLive(props: {
 
       {s.status === "confirmed" && (
         <section>
-          <h2 className="display text-center text-2xl">Payment</h2>
+          <h2 className="heading text-center">Payment</h2>
           {s.paid ? (
             <p className="mt-2 text-center text-pine">Payment received. Thank you!</p>
           ) : (
@@ -85,7 +85,6 @@ export default function StatusLive(props: {
                 {venmoUrl && (
                   <a href={venmoUrl} target="_blank" rel="noreferrer" className={PAY_ROW}>
                     <span>Venmo</span>
-                    <span className="flex-1 translate-y-[-5px] border-b border-dotted border-gold/70" />
                     <span className="font-bold">@{props.venmoHandle}</span>
                   </a>
                 )}
@@ -100,7 +99,6 @@ export default function StatusLive(props: {
                     }}
                   >
                     <span>Zelle</span>
-                    <span className="flex-1 translate-y-[-5px] border-b border-dotted border-gold/70" />
                     <span className="font-bold">{copied ? "Copied" : props.zelleInfo}</span>
                   </button>
                 )}
