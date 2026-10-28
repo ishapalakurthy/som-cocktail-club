@@ -80,7 +80,6 @@ export default function EventLive(props: {
             <div className="mt-2 font-mono text-4xl font-bold tabular-nums">
               {formatCountdown(props.opensAt - currentNow)}
             </div>
-            <div className="mt-2 text-xs text-stone-500">The form will appear here automatically. No need to refresh.</div>
           </div>
         ) : isOpen ? (
           <SignupForm slug={props.slug} />
