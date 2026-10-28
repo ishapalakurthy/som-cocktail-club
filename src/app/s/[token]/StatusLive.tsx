@@ -49,13 +49,13 @@ export default function StatusLive(props: {
       {s.status === "confirmed" && (
         <div className="py-2 text-center">
           <div className="eyebrow text-pine">Confirmed</div>
-          <div className="display mt-1 text-5xl text-pine">You&apos;re in, {props.firstName}</div>
+          <div className="display mt-4 text-5xl text-pine">You&apos;re in, {props.firstName}</div>
         </div>
       )}
       {s.status === "waitlist" && (
         <div className="py-2 text-center">
           <div className="eyebrow">Waitlist</div>
-          <div className="display mt-1 text-5xl text-gold-deep">No. {s.position}</div>
+          <div className="display mt-4 text-5xl text-gold-deep">No. {s.position}</div>
           <div className="mx-auto mt-2 max-w-sm text-sm">
             {props.groupLabel} is full. If a spot opens up and you&apos;re moved in, this page will update, so
             check back. Don&apos;t pay unless you get a spot.
