@@ -17,7 +17,10 @@ waitlists, payment tracking, and email notifications.
 - Roster per group: confirmed list with a 24-hour payment countdown and **Venmo / Zelle / Other**
   paid buttons, waitlist with **Move up** (emails them) and **Remove**, and a removed list with
   **Restore** / **Delete**.
-- Copy Slack link, download CSV, archive old events, add/remove board members.
+- Copy Slack link, download CSV, archive old events.
+- **Board members** page: the list of Yale emails with admin access. No passwords: board members
+  type their Yale email at `/admin/login` and get a one-time sign-in link. Only someone already on
+  the board can add or remove people, and a removed person loses access immediately.
 
 Which form answers count toward which group is set in `src/lib/categories.ts`.
 
@@ -31,8 +34,9 @@ createdb cocktail_club
 cp .env.example .env.local      # then set DATABASE_URL=postgres://<your-mac-username>@localhost:5432/cocktail_club
                                 # and SESSION_SECRET (openssl rand -hex 32)
 npm run db:setup
-npm run create-admin -- you@yale.edu "Your Name" "pick-a-password"
+npm run create-admin -- you@yale.edu "Your Name"
 npm run dev                     # open http://localhost:3000/admin
+                                # (without SMTP set up, the sign-in link is printed in this terminal)
 ```
 
 ## Put it online (free)
@@ -43,9 +47,10 @@ npm run dev                     # open http://localhost:3000/admin
 3. **Hosting: [Vercel](https://vercel.com)** → Add New Project → import the GitHub repo. Before deploying,
    add the environment variables from `.env.example` (with `APP_URL` set to your Vercel URL,
    e.g. `https://cocktail-club.vercel.app`). Deploy.
-4. **First board login**: on your laptop, temporarily set `DATABASE_URL` in `.env.local` to the
-   Supabase URI and run `npm run create-admin -- you@yale.edu "Your Name" "a-password"`.
-   After that, add other board members from the **Board members** page.
+4. **First board member**: on your laptop, temporarily set `DATABASE_URL` in `.env.local` to the
+   Supabase URI and run `npm run create-admin -- you@yale.edu "Your Name"`. Then sign in at
+   `/admin` and add everyone else from the **Board members** page.
+   Sign-in links are sent by email, so set up the SMTP variables before going live.
 
 Every push to the `main` branch on GitHub redeploys the site automatically.
 

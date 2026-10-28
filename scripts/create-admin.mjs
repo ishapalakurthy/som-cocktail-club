@@ -1,11 +1,11 @@
-// Creates (or resets the password of) a board member login.
-// Usage: npm run create-admin -- you@yale.edu "Your Name" "a-password"
+// Adds the first board member (after that, add people from the Board members page).
+// Usage: npm run create-admin -- you@yale.edu "Your Name"
 import postgres from "postgres";
-import bcrypt from "bcryptjs";
 
-const [email, name, password] = process.argv.slice(2);
-if (!email || !name || !password) {
-  console.error('Usage: npm run create-admin -- you@yale.edu "Your Name" "a-password"');
+const [rawEmail, name] = process.argv.slice(2);
+const email = rawEmail?.trim().toLowerCase();
+if (!email || !name || !email.endsWith("@yale.edu")) {
+  console.error('Usage: npm run create-admin -- you@yale.edu "Your Name"');
   process.exit(1);
 }
 
@@ -13,11 +13,9 @@ const url = process.env.DATABASE_URL;
 if (!url) throw new Error("DATABASE_URL is not set (put it in .env.local)");
 
 const sql = postgres(url, { prepare: false });
-const hash = await bcrypt.hash(password, 10);
 await sql`
-  insert into admins (email, name, password_hash)
-  values (${email.toLowerCase().trim()}, ${name}, ${hash})
-  on conflict (email) do update set name = excluded.name, password_hash = excluded.password_hash
+  insert into admins (email, name, added_by) values (${email}, ${name}, 'setup script')
+  on conflict (email) do update set name = excluded.name
 `;
-console.log(`Board member ${email} can now log in at /admin.`);
+console.log(`${email} is on the board. Sign in at /admin with that email.`);
 await sql.end();

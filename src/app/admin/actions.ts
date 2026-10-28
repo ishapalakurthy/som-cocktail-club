@@ -1,11 +1,11 @@
 "use server";
 
-import bcrypt from "bcryptjs";
+import { createHash, randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { endSession, requireAdmin, startSession } from "@/lib/auth";
 import { sql } from "@/lib/db";
-import { sendPromotedEmail } from "@/lib/email";
+import { sendBoardWelcome, sendLoginLink, sendPromotedEmail } from "@/lib/email";
 import {
   deleteSignup,
   DuplicateSignupError,
@@ -20,17 +20,40 @@ import { fromLocalInput } from "@/lib/time";
 
 export type FormState = { error?: string; ok?: string };
 
-// ---------- Login ----------
+// ---------- Sign in (emailed one-time links) ----------
 
-export async function login(_prev: FormState, form: FormData): Promise<FormState> {
+const LINK_TTL_MINUTES = 15;
+const hashToken = (t: string) => createHash("sha256").update(t).digest("hex");
+
+export async function requestLoginLink(_prev: FormState, form: FormData): Promise<FormState> {
   const email = String(form.get("email") ?? "").trim().toLowerCase();
-  const password = String(form.get("password") ?? "");
-  const [admin] = await sql<{ id: string; password_hash: string }[]>`
-    select id, password_hash from admins where email = ${email}`;
-  if (!admin || !(await bcrypt.compare(password, admin.password_hash))) {
-    return { error: "Wrong email or password." };
+  if (!email.endsWith("@yale.edu")) return { error: "Please use your @yale.edu email." };
+  const [admin] = await sql<{ id: string; name: string }[]>`select id, name from admins where email = ${email}`;
+  if (!admin) return { error: "That email isn't on the board list. Ask a current board member to add you." };
+
+  // Don't let anyone spam a board member's inbox.
+  const [recent] = await sql`
+    select 1 from admin_login_tokens
+    where admin_id = ${admin.id} and created_at > now() - interval '1 minute'`;
+  if (!recent) {
+    const token = randomBytes(32).toString("base64url");
+    await sql`
+      insert into admin_login_tokens (token_hash, admin_id, expires_at)
+      values (${hashToken(token)}, ${admin.id}, now() + make_interval(mins => ${LINK_TTL_MINUTES}))`;
+    await sendLoginLink(email, admin.name, `${process.env.APP_URL}/admin/login/verify?token=${token}`);
   }
-  await startSession(admin.id);
+  return { ok: `Check ${email} for a sign-in link. It expires in ${LINK_TTL_MINUTES} minutes.` };
+}
+
+// Called from the "Sign in" button on the link's page (not on page load, so email
+// security scanners that pre-open links can't use up the one-time link).
+export async function signInWithToken(token: string): Promise<FormState> {
+  const [row] = await sql<{ admin_id: string }[]>`
+    update admin_login_tokens set used_at = now()
+    where token_hash = ${hashToken(token)} and used_at is null and expires_at > now()
+    returning admin_id`;
+  if (!row) return { error: "This sign-in link has expired or was already used. Request a new one." };
+  await startSession(row.admin_id);
   redirect("/admin");
 }
 
@@ -141,37 +164,29 @@ export async function markPaid(signupId: string, method: "venmo" | "zelle" | "ot
   revalidatePath("/admin/events/[id]", "page");
 }
 
-// ---------- Board members ----------
+// ---------- Board members (only signed-in board members can change the list) ----------
 
 export async function addBoardMember(_prev: FormState, form: FormData): Promise<FormState> {
-  await requireAdmin();
+  const me = await requireAdmin();
   const email = String(form.get("email") ?? "").trim().toLowerCase();
   const name = String(form.get("name") ?? "").trim();
-  const password = String(form.get("password") ?? "");
-  if (!email.includes("@") || !name) return { error: "Name and email are required." };
-  if (password.length < 8) return { error: "Temporary password must be at least 8 characters." };
+  if (!name) return { error: "Please enter their name." };
+  if (!/^[^\s@]+@yale\.edu$/.test(email)) return { error: "Board members must use a @yale.edu email." };
   try {
-    await sql`insert into admins (email, name, password_hash)
-              values (${email}, ${name}, ${await bcrypt.hash(password, 10)})`;
+    await sql`insert into admins (email, name, added_by) values (${email}, ${name}, ${me.email})`;
   } catch (err) {
-    if ((err as { code?: string }).code === "23505") return { error: "That email is already a board member." };
+    if ((err as { code?: string }).code === "23505") return { error: "That email is already on the board." };
     throw err;
   }
+  await sendBoardWelcome(email, name, me.name);
   revalidatePath("/admin/board");
-  return { ok: `Added ${name}. Send them the temporary password privately.` };
+  return { ok: `Added ${name}. They can now sign in with ${email}.` };
 }
 
-export async function removeBoardMember(adminId: string) {
+export async function removeBoardMember(adminId: string): Promise<FormState> {
   const me = await requireAdmin();
-  if (adminId === me.id) return;
+  if (adminId === me.id) return { error: "You can't remove yourself. Ask another board member to do it." };
   await sql`delete from admins where id = ${adminId}`;
   revalidatePath("/admin/board");
-}
-
-export async function changePassword(_prev: FormState, form: FormData): Promise<FormState> {
-  const me = await requireAdmin();
-  const password = String(form.get("password") ?? "");
-  if (password.length < 8) return { error: "Password must be at least 8 characters." };
-  await sql`update admins set password_hash = ${await bcrypt.hash(password, 10)} where id = ${me.id}`;
-  return { ok: "Password updated." };
+  return {};
 }

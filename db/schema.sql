@@ -4,12 +4,25 @@
 
 create extension if not exists pgcrypto;
 
+-- The board: anyone listed here can sign in to /admin with their Yale email.
 create table if not exists admins (
-  id            uuid primary key default gen_random_uuid(),
-  email         text not null unique,
-  name          text not null,
-  password_hash text not null,
-  created_at    timestamptz not null default now()
+  id         uuid primary key default gen_random_uuid(),
+  email      text not null unique,
+  name       text not null,
+  added_by   text,                              -- email of the board member who added them
+  created_at timestamptz not null default now()
+);
+-- Board members sign in with emailed links, not passwords.
+alter table admins drop column if exists password_hash;
+alter table admins add column if not exists added_by text;
+
+-- One-time sign-in links. Only a hash of the link's secret is stored.
+create table if not exists admin_login_tokens (
+  token_hash text primary key,
+  admin_id   uuid not null references admins(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  expires_at timestamptz not null,
+  used_at    timestamptz
 );
 
 create table if not exists events (
@@ -57,5 +70,6 @@ create unique index if not exists signups_one_per_person
 
 -- Nobody but the server (which connects as the database owner) can read these tables.
 alter table admins  enable row level security;
+alter table admin_login_tokens enable row level security;
 alter table events  enable row level security;
 alter table signups enable row level security;

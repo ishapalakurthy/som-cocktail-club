@@ -101,3 +101,29 @@ Cheers,
 Cocktail Club`,
   );
 }
+
+export async function sendLoginLink(to: string, name: string, link: string) {
+  await send(
+    to,
+    "Your Cocktail Club board sign-in link",
+    `Hi ${name},
+
+Click to sign in to the Cocktail Club board (link works once, for 15 minutes):
+${link}
+
+If you didn't ask for this, you can ignore this email.`,
+  );
+}
+
+export async function sendBoardWelcome(to: string, name: string, addedBy: string) {
+  await send(
+    to,
+    "You've been added to the Cocktail Club board",
+    `Hi ${name},
+
+${addedBy} gave you board access to Cocktail Club signups.
+Sign in with this email address at: ${process.env.APP_URL}/admin
+
+Cocktail Club`,
+  );
+}
