@@ -33,7 +33,7 @@ export default async function EventPage(props: PageProps<"/e/[slug]">) {
         <div className="mt-4 text-center text-lg font-medium">
           {formatDateTime(event.starts_at)} / {formatPrice(event.price_cents)}
         </div>
-        <div className="mt-1 text-center text-ink/65">{event.location}</div>
+        <div className="mt-1 text-center text-ink/65">📍 {event.location}</div>
         {event.description && (
           <p className="mx-auto mt-5 max-w-md whitespace-pre-line text-center text-lg leading-relaxed text-ink/80">
             {event.description}
