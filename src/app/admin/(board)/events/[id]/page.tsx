@@ -68,7 +68,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
             <Link
               key={g}
               href={`?group=${g}`}
-              className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium ${
+              className={`-mb-px border-b-2 px-4 py-2 text-sm font-bold ${
                 g === group ? "border-navy text-navy" : "border-transparent text-ink/55 hover:text-ink"
               }`}
             >
@@ -150,7 +150,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
 
       {removed.length > 0 && (
         <details className="mt-8">
-          <summary className="cursor-pointer text-sm font-medium text-ink/55">Removed ({removed.length})</summary>
+          <summary className="cursor-pointer text-sm font-bold text-ink/55">Removed ({removed.length})</summary>
           <Table head={["Name", "Signed up", "Removed", "By", ""]}>
             {removed.map((s) => (
               <tr key={s.id} className="border-t border-gold/25 align-top text-ink/55">
@@ -179,7 +179,7 @@ function Payment({ s, now }: { s: SignupRow; now: number }) {
   if (s.paid) {
     return (
       <div className="flex items-center gap-2 whitespace-nowrap">
-        <span className="rounded-full bg-pine/10 px-2 py-0.5 text-xs font-medium text-pine">
+        <span className="rounded-full bg-pine/10 px-2 py-0.5 text-xs font-bold text-pine">
           Paid · {s.payment_method === "venmo" ? "Venmo" : s.payment_method === "zelle" ? "Zelle" : "Other"}
         </span>
         <ActionButton action={markPaid.bind(null, s.id, null)} className="text-xs text-ink/40 hover:text-wine">
@@ -191,7 +191,7 @@ function Payment({ s, now }: { s: SignupRow; now: number }) {
   const left = s.confirmed_at ? s.confirmed_at.getTime() + PAYMENT_WINDOW_MS - now : 0;
   return (
     <div className="space-y-1">
-      <div className={`whitespace-nowrap text-xs font-medium ${left < 0 ? "text-wine" : "text-gold-deep"}`}>
+      <div className={`whitespace-nowrap text-xs font-bold ${left < 0 ? "text-wine" : "text-gold-deep"}`}>
         {left < 0 ? `Overdue by ${formatDuration(left)}` : `Unpaid · ${formatDuration(left)} left`}
       </div>
       <div className="flex gap-1">
@@ -206,7 +206,7 @@ function Payment({ s, now }: { s: SignupRow; now: number }) {
 function Person({ s }: { s: SignupRow }) {
   return (
     <Td>
-      <div className="font-medium">{s.name}</div>
+      <div className="font-bold">{s.name}</div>
       <div className="text-xs text-ink/55">{s.email}</div>
     </Td>
   );
@@ -228,7 +228,7 @@ function Table({ head, children }: { head: string[]; children: React.ReactNode }
     <div className="mt-2 overflow-x-auto rounded-md border border-gold/50 bg-paper">
       <table className="w-full text-sm">
         <thead className="bg-cream text-left text-xs uppercase tracking-wide text-ink/55">
-          <tr>{head.map((h, i) => <th key={i} className="px-3 py-2 font-medium">{h}</th>)}</tr>
+          <tr>{head.map((h, i) => <th key={i} className="px-3 py-2 font-bold">{h}</th>)}</tr>
         </thead>
         <tbody>{children}</tbody>
       </table>
