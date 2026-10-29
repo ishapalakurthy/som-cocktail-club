@@ -1,4 +1,4 @@
-import { getSignupByToken, waitlistPosition } from "@/lib/signups";
+import { getSignupByToken, leftWaitlist, waitlistPosition } from "@/lib/signups";
 
 // Polled by a student's status page so they see the moment they move off the waitlist.
 export async function GET(_req: Request, ctx: RouteContext<"/api/status/[token]">) {
@@ -11,6 +11,7 @@ export async function GET(_req: Request, ctx: RouteContext<"/api/status/[token]"
       position: await waitlistPosition(s),
       confirmedAt: s.confirmed_at,
       paid: s.paid,
+      leftWaitlist: leftWaitlist(s),
     },
     { headers: { "Cache-Control": "no-store" } },
   );

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { GROUPS } from "@/lib/categories";
-import { getEventById, getSignupByToken, waitlistPosition } from "@/lib/signups";
+import { getEventById, getSignupByToken, leftWaitlist, waitlistPosition } from "@/lib/signups";
 import { requestTime } from "@/lib/time";
 import { emailEnabled } from "@/lib/email";
 import { MenuHeader } from "../../_components/Crest";
@@ -45,6 +45,7 @@ export default async function StatusPage(props: PageProps<"/s/[token]">) {
             position: await waitlistPosition(signup),
             confirmedAt: signup.confirmed_at?.toISOString() ?? null,
             paid: signup.paid,
+            leftWaitlist: leftWaitlist(signup),
           }}
           priceCents={event.price_cents}
           venmoHandle={event.venmo_handle.replace(/^@/, "")}

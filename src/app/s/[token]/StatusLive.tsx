@@ -9,7 +9,7 @@ import { withdraw } from "./actions";
 // Venmo and Zelle are matching menu lines; Venmo opens the app, Zelle copies the number.
 const PAY_ROW = "flex w-full items-baseline justify-between gap-3 border-b border-line py-3 text-left hover:text-navy";
 
-type Status = { status: "confirmed" | "waitlist" | "removed"; position: number | null; confirmedAt: string | null; paid: boolean };
+type Status = { status: "confirmed" | "waitlist" | "removed"; position: number | null; confirmedAt: string | null; paid: boolean; leftWaitlist: boolean };
 
 export default function StatusLive(props: {
   token: string;
@@ -63,12 +63,18 @@ export default function StatusLive(props: {
           </div>
         </div>
       )}
-      {s.status === "removed" && (
-        <div className="py-2 text-center">
-          <div className="title">No longer signed up</div>
-          <div className="mt-2 text-sm">Your spot has been released. Message the board if this is a mistake.</div>
-        </div>
-      )}
+      {s.status === "removed" &&
+        (s.leftWaitlist ? (
+          <div className="py-2 text-center">
+            <div className="title">You&apos;ve left the waitlist</div>
+            <div className="mt-2 text-sm">Thanks for letting us know. You can sign up again from the event page.</div>
+          </div>
+        ) : (
+          <div className="py-2 text-center">
+            <div className="title">No longer signed up</div>
+            <div className="mt-2 text-sm">Your spot has been released. Message the board if this is a mistake.</div>
+          </div>
+        ))}
       <div className="rule" />
 
       {s.status === "confirmed" && (
@@ -119,10 +125,10 @@ export default function StatusLive(props: {
               const msg =
                 s.status === "confirmed"
                   ? "Give up your spot? You can't undo this. If it's within 5 hours of the event and nobody takes your place, you're still responsible for the ticket cost."
-                  : "Leave the waitlist? You can't undo this.";
+                  : "Leave the waitlist? You'll lose your place in line.";
               if (confirm(msg)) startTransition(async () => {
                   await withdraw(props.token);
-                  setS({ ...s, status: "removed" });
+                  setS({ ...s, status: "removed", leftWaitlist: s.status === "waitlist" });
                 });
             }}
           >

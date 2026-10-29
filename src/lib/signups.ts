@@ -60,6 +60,11 @@ export async function waitlistPosition(s: SignupRow) {
   return n;
 }
 
+// They took themselves off the waitlist (as opposed to giving up a confirmed spot or being removed by a lead).
+export function leftWaitlist(s: SignupRow) {
+  return s.status === "removed" && s.removed_by === "self" && !s.confirmed_at;
+}
+
 export type NewSignup = { name: string; email: string; category: string; group: GroupKey; dietary: string };
 
 export class DuplicateSignupError extends Error {}
