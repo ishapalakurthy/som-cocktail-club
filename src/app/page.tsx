@@ -28,7 +28,7 @@ export default async function Home() {
           </Link>
         ))}
         <Link href="/admin" className="mt-10 block text-center text-xs text-ink/40 hover:text-ink/70">
-          Board login
+          Lead Login
         </Link>
       </div>
     </main>

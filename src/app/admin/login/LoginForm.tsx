@@ -8,7 +8,7 @@ export default function LoginForm() {
   return (
     <form action={action} className="mt-6 space-y-4">
       <div>
-        <label className="label" htmlFor="email">Board Yale email</label>
+        <label className="label" htmlFor="email">Lead Yale email</label>
         <input id="email" name="email" type="email" required className="input" placeholder="you@yale.edu" autoComplete="username" />
       </div>
       <div>
@@ -17,7 +17,6 @@ export default function LoginForm() {
       </div>
       {state.error && <p className="text-sm text-wine">{state.error}</p>}
       <button className="btn-primary w-full" disabled={pending}>{pending ? "Signing in…" : "Sign in"}</button>
-      <p className="text-xs text-ink/55">Only emails on the leads list can sign in.</p>
     </form>
   );
 }
