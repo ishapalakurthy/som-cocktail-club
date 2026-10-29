@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 
-export default function CopyLink({ url }: { url: string }) {
+export default function CopyLink({ url, className = "btn-primary" }: { url: string; className?: string }) {
   const [copied, setCopied] = useState(false);
   return (
     <button
       type="button"
-      className="btn-primary"
+      className={className}
       onClick={async () => {
         await navigator.clipboard.writeText(url);
         setCopied(true);

@@ -26,7 +26,30 @@ export default async function AdminHome(props: PageProps<"/admin">) {
         <Link href="/admin/events/new" className="btn-primary">New event</Link>
       </div>
 
-      <div className="mt-8 overflow-x-auto">
+      {/* Phones: one stacked block per event instead of the wide table. */}
+      <div className="mt-6 sm:hidden">
+        <div className="border-b border-line pb-2 text-sm text-ink/60">{showArchived ? "Archived" : "Upcoming"}</div>
+        {events.length === 0 && <p className="py-6 text-ink/60">No events yet.</p>}
+        {events.map((e) => (
+          <Link key={e.id} href={`/admin/events/${e.id}`} className="block border-b border-line-soft py-4">
+            <div className="heading">{e.name}</div>
+            <div className="mt-1 text-sm text-ink/60">
+              {formatDateTime(e.starts_at)} · {e.location}
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
+              <MobileCount label="1st years" taken={e.confirmed_first} cap={e.cap_first} />
+              <MobileCount label="2nd years" taken={e.confirmed_second} cap={e.cap_second} />
+              <div><span className="text-ink/60">Waitlist</span> <b className="tabular-nums">{e.waitlist}</b></div>
+              <div>
+                <span className="text-ink/60">Paid</span>{" "}
+                <b className="tabular-nums">{e.paid}/{e.confirmed_first + e.confirmed_second}</b>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      <div className="mt-8 hidden overflow-x-auto sm:block">
         <table className="w-full min-w-[640px]">
           <thead>
             <tr className="border-b border-line text-sm text-ink/60">
@@ -73,6 +96,17 @@ export default async function AdminHome(props: PageProps<"/admin">) {
         {showArchived ? "Back to upcoming events" : "View archived events"}
       </Link>
     </>
+  );
+}
+
+function MobileCount({ label, taken, cap }: { label: string; taken: number; cap: number }) {
+  return (
+    <div>
+      <span className="text-ink/60">{label}</span> <b className="tabular-nums">{taken}/{cap}</b>
+      {taken >= cap && cap > 0 && (
+        <span className="ml-1.5 rounded-sm bg-wine/10 px-1.5 py-0.5 text-xs text-wine">Full</span>
+      )}
+    </div>
   );
 }
 

@@ -148,8 +148,8 @@ function SignupForm({ slug }: { slug: string }) {
         <legend className="label">Which best describes you? *</legend>
         <div className="space-y-1.5">
           {CATEGORIES.map((c) => (
-            <label key={c.key} className="flex items-center gap-2 text-sm">
-              <input type="radio" name="category" value={c.key} required className="accent-navy" defaultChecked={v.category === c.key} />
+            <label key={c.key} className="flex items-center gap-2 text-sm max-sm:gap-3 max-sm:py-1">
+              <input type="radio" name="category" value={c.key} required className="accent-navy max-sm:size-5" defaultChecked={v.category === c.key} />
               {c.label}
             </label>
           ))}
@@ -175,8 +175,8 @@ function SignupForm({ slug }: { slug: string }) {
 
 function Ack({ name, checked, children }: { name: string; checked: boolean; children: React.ReactNode }) {
   return (
-    <label className="flex items-start gap-2">
-      <input type="checkbox" name={name} required className="mt-0.5 accent-navy" defaultChecked={checked} />
+    <label className="flex items-start gap-2 max-sm:gap-3 max-sm:py-1">
+      <input type="checkbox" name={name} required className="mt-0.5 shrink-0 accent-navy max-sm:size-5" defaultChecked={checked} />
       <span>{children}</span>
     </label>
   );

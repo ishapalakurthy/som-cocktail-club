@@ -26,6 +26,21 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
   const openSpots = cap - confirmed.length;
   const now = requestTime();
   const opensIn = event.opens_at.getTime() - now;
+  const slackUrl = `${process.env.APP_URL}/e/${event.slug}`;
+  const moreActions = (
+    <>
+      <Link href={`/e/${event.slug}`} target="_blank" className="btn-secondary">View public page</Link>
+      <Link href={`/admin/events/${event.id}/edit`} className="btn-secondary">Edit</Link>
+      <a href={`/admin/events/${event.id}/export`} className="btn-secondary">Download CSV</a>
+      <ActionButton
+        action={setArchived.bind(null, event.id, !event.archived)}
+        className="btn-secondary"
+        confirm={event.archived ? undefined : "Archive this event? It will be hidden from students and the events list."}
+      >
+        {event.archived ? "Unarchive" : "Archive"}
+      </ActionButton>
+    </>
+  );
 
   return (
     <>
@@ -46,19 +61,23 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
             )}
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <CopyLink url={`${process.env.APP_URL}/e/${event.slug}`} />
-          <Link href={`/e/${event.slug}`} target="_blank" className="btn-secondary">View public page</Link>
-          <Link href={`/admin/events/${event.id}/edit`} className="btn-secondary">Edit</Link>
-          <a href={`/admin/events/${event.id}/export`} className="btn-secondary">Download CSV</a>
-          <ActionButton
-            action={setArchived.bind(null, event.id, !event.archived)}
-            className="btn-secondary"
-            confirm={event.archived ? undefined : "Archive this event? It will be hidden from students and the events list."}
-          >
-            {event.archived ? "Unarchive" : "Archive"}
-          </ActionButton>
+        <div className="hidden flex-wrap gap-2 sm:flex">
+          <CopyLink url={slackUrl} />
+          {moreActions}
         </div>
+      </div>
+
+      {/* Phones: the main button plus a ⋯ menu for the rest. */}
+      <div className="mt-4 flex gap-2 sm:hidden">
+        <CopyLink url={slackUrl} className="btn-primary flex-1 py-3" />
+        <details className="relative">
+          <summary className="btn-secondary h-full cursor-pointer list-none px-4 text-lg leading-none [&::-webkit-details-marker]:hidden" aria-label="More actions">
+            ⋯
+          </summary>
+          <div className="absolute right-0 z-20 mt-2 flex w-52 flex-col gap-2 rounded-sm border border-line bg-white p-2 shadow-lg [&>*]:w-full">
+            {moreActions}
+          </div>
+        </details>
       </div>
 
       <div className="mt-6 flex gap-2 border-b border-line">
@@ -69,11 +88,17 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
             <Link
               key={g}
               href={`?group=${g}`}
-              className={`-mb-px border-b-2 px-4 py-2 text-sm font-bold ${
+              className={`-mb-px border-b-2 px-4 py-2 text-sm font-bold max-sm:flex-1 max-sm:text-center ${
                 g === group ? "border-navy text-navy" : "border-transparent text-ink/55 hover:text-ink"
               }`}
             >
-              {GROUPS[g].label} <span className="ml-1 text-ink/55">{c}/{capacity(event, g)} · {w} waiting</span>
+              <span className="hidden sm:inline">
+                {GROUPS[g].label} <span className="ml-1 text-ink/55">{c}/{capacity(event, g)} · {w} waiting</span>
+              </span>
+              <span className="sm:hidden">
+                {GROUPS[g].short}
+                <span className="block text-xs font-normal text-ink/55">{c}/{capacity(event, g)} · {w} waiting</span>
+              </span>
             </Link>
           );
         })}
@@ -95,23 +120,51 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
         {confirmed.length === 0 ? (
           <Empty>No one yet.</Empty>
         ) : (
-          <Table head={["#", "Name", "Type", "Dietary", "Signed up", "Payment", ""]}>
-            {confirmed.map((s, i) => (
-              <tr key={s.id} className="border-t border-line-soft align-top">
-                <Td className="text-ink/40">{i + 1}</Td>
-                <Person s={s} />
-                <Td className="text-xs text-ink/65">{categoryLabel(s.category)}</Td>
-                <Td className="text-xs">{s.dietary}</Td>
-                <Td className="whitespace-nowrap text-xs text-ink/65">{formatTime(s.created_at)}</Td>
-                <Td><Payment s={s} now={now} /></Td>
-                <Td className="text-right">
-                  <ActionButton action={remove.bind(null, s.id)} confirm={`Remove ${s.name}? Their spot will open up.`}>
-                    Remove
-                  </ActionButton>
-                </Td>
-              </tr>
-            ))}
-          </Table>
+          <>
+            <Table head={["#", "Name", "Type", "Dietary", "Signed up", "Payment", ""]}>
+              {confirmed.map((s, i) => (
+                <tr key={s.id} className="border-t border-line-soft align-top">
+                  <Td className="text-ink/40">{i + 1}</Td>
+                  <Person s={s} />
+                  <Td className="text-xs text-ink/65">{categoryLabel(s.category)}</Td>
+                  <Td className="text-xs">{s.dietary}</Td>
+                  <Td className="whitespace-nowrap text-xs text-ink/65">{formatTime(s.created_at)}</Td>
+                  <Td><Payment s={s} now={now} /></Td>
+                  <Td className="text-right">
+                    <ActionButton action={remove.bind(null, s.id)} confirm={`Remove ${s.name}? Their spot will open up.`}>
+                      Remove
+                    </ActionButton>
+                  </Td>
+                </tr>
+              ))}
+            </Table>
+            <MobileList>
+              {confirmed.map((s, i) => (
+                <MobileCard key={s.id} s={s} n={i + 1} right={<PaymentStatus s={s} now={now} />}>
+                  {s.paid ? (
+                    <ActionButton action={markPaid.bind(null, s.id, null)} className="mt-2 text-sm text-ink/55 underline">
+                      Undo paid
+                    </ActionButton>
+                  ) : (
+                    <div className="mt-3 grid grid-cols-3 gap-2">
+                      <ActionButton action={markPaid.bind(null, s.id, "venmo")} className={TAP}>Venmo</ActionButton>
+                      <ActionButton action={markPaid.bind(null, s.id, "zelle")} className={TAP}>Zelle</ActionButton>
+                      <ActionButton action={markPaid.bind(null, s.id, "other")} className={TAP}>Other</ActionButton>
+                    </div>
+                  )}
+                  <div>
+                    <ActionButton
+                      action={remove.bind(null, s.id)}
+                      confirm={`Remove ${s.name}? Their spot will open up.`}
+                      className="mt-3 text-sm font-bold text-wine"
+                    >
+                      Remove
+                    </ActionButton>
+                  </div>
+                </MobileCard>
+              ))}
+            </MobileList>
+          </>
         )}
       </Section>
 
@@ -119,33 +172,61 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
         {waitlist.length === 0 ? (
           <Empty>No one on the waitlist.</Empty>
         ) : (
-          <Table head={["#", "Name", "Type", "Dietary", "Signed up", ""]}>
-            {waitlist.map((s, i) => (
-              <tr key={s.id} className="border-t border-line-soft align-top">
-                <Td className="text-ink/40">{i + 1}</Td>
-                <Person s={s} />
-                <Td className="text-xs text-ink/65">{categoryLabel(s.category)}</Td>
-                <Td className="text-xs">{s.dietary}</Td>
-                <Td className="whitespace-nowrap text-xs text-ink/65">{formatTime(s.created_at)}</Td>
-                <Td className="space-x-1 whitespace-nowrap text-right">
-                  <ActionButton
-                    action={promote.bind(null, s.id)}
-                    className="btn-primary btn-sm"
-                    confirm={
-                      openSpots <= 0
-                        ? `There are no open spots. Move ${s.name} up anyway (over capacity)?`
-                        : `Move ${s.name} into a confirmed spot? They'll have 24h to pay.`
-                    }
-                  >
-                    Move up
-                  </ActionButton>
-                  <ActionButton action={remove.bind(null, s.id)} confirm={`Remove ${s.name} from the waitlist?`}>
-                    Remove
-                  </ActionButton>
-                </Td>
-              </tr>
-            ))}
-          </Table>
+          <>
+            <Table head={["#", "Name", "Type", "Dietary", "Signed up", ""]}>
+              {waitlist.map((s, i) => (
+                <tr key={s.id} className="border-t border-line-soft align-top">
+                  <Td className="text-ink/40">{i + 1}</Td>
+                  <Person s={s} />
+                  <Td className="text-xs text-ink/65">{categoryLabel(s.category)}</Td>
+                  <Td className="text-xs">{s.dietary}</Td>
+                  <Td className="whitespace-nowrap text-xs text-ink/65">{formatTime(s.created_at)}</Td>
+                  <Td className="space-x-1 whitespace-nowrap text-right">
+                    <ActionButton
+                      action={promote.bind(null, s.id)}
+                      className="btn-primary btn-sm"
+                      confirm={
+                        openSpots <= 0
+                          ? `There are no open spots. Move ${s.name} up anyway (over capacity)?`
+                          : `Move ${s.name} into a confirmed spot? They'll have 24h to pay.`
+                      }
+                    >
+                      Move up
+                    </ActionButton>
+                    <ActionButton action={remove.bind(null, s.id)} confirm={`Remove ${s.name} from the waitlist?`}>
+                      Remove
+                    </ActionButton>
+                  </Td>
+                </tr>
+              ))}
+            </Table>
+            <MobileList>
+              {waitlist.map((s, i) => (
+                <MobileCard key={s.id} s={s} n={i + 1}>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <ActionButton
+                      action={promote.bind(null, s.id)}
+                      className="btn-primary py-2.5"
+                      confirm={
+                        openSpots <= 0
+                          ? `There are no open spots. Move ${s.name} up anyway (over capacity)?`
+                          : `Move ${s.name} into a confirmed spot? They'll have 24h to pay.`
+                      }
+                    >
+                      Move up
+                    </ActionButton>
+                    <ActionButton
+                      action={remove.bind(null, s.id)}
+                      confirm={`Remove ${s.name} from the waitlist?`}
+                      className={`${TAP} text-wine`}
+                    >
+                      Remove
+                    </ActionButton>
+                  </div>
+                </MobileCard>
+              ))}
+            </MobileList>
+          </>
         )}
       </Section>
 
@@ -170,6 +251,24 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
               </tr>
             ))}
           </Table>
+          <MobileList>
+            {removed.map((s) => (
+              <MobileCard
+                key={s.id}
+                s={s}
+                note={`Removed ${s.removed_at ? formatTime(s.removed_at) : ""} by ${s.removed_by === "self" ? "themselves" : s.removed_by}`}
+              >
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <ActionButton action={restore.bind(null, s.id)} confirm={`Put ${s.name} back on the waitlist in their original spot?`} className={TAP}>
+                    Restore
+                  </ActionButton>
+                  <ActionButton action={deleteForever.bind(null, s.id)} confirm={`Permanently delete ${s.name}'s signup? This can't be undone.`} className={`${TAP} text-wine`}>
+                    Delete
+                  </ActionButton>
+                </div>
+              </MobileCard>
+            ))}
+          </MobileList>
         </details>
       )}
     </>
@@ -204,6 +303,55 @@ function Payment({ s, now }: { s: SignupRow; now: number }) {
   );
 }
 
+// Phones get one card per person instead of a table row, so nothing scrolls sideways.
+const TAP = "btn-secondary py-2.5";
+
+function MobileList({ children }: { children: React.ReactNode }) {
+  return <div className="mt-2 border-t border-line sm:hidden">{children}</div>;
+}
+
+function MobileCard({ s, n, right, note, children }: {
+  s: SignupRow;
+  n?: number;
+  right?: React.ReactNode;
+  note?: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className="border-b border-line-soft py-3 text-sm">
+      <div className="flex items-baseline justify-between gap-3">
+        <div className="font-bold">
+          {n !== undefined && <span className="mr-1.5 font-normal text-ink/40">{n}</span>}
+          {s.name}
+        </div>
+        {right}
+      </div>
+      <div className="break-all text-xs text-ink/55">{s.email}</div>
+      <div className="mt-0.5 text-xs text-ink/65">
+        {note ?? `${categoryLabel(s.category)} · signed up ${formatTime(s.created_at)}`}
+      </div>
+      {s.dietary && <div className="mt-0.5 text-xs">Dietary: {s.dietary}</div>}
+      {children}
+    </div>
+  );
+}
+
+function PaymentStatus({ s, now }: { s: SignupRow; now: number }) {
+  if (s.paid) {
+    return (
+      <span className="shrink-0 text-xs font-bold text-pine">
+        Paid · {s.payment_method === "venmo" ? "Venmo" : s.payment_method === "zelle" ? "Zelle" : "Other"}
+      </span>
+    );
+  }
+  const left = s.confirmed_at ? s.confirmed_at.getTime() + PAYMENT_WINDOW_MS - now : 0;
+  return (
+    <span className={`shrink-0 text-xs font-bold ${left < 0 ? "text-wine" : "text-gold-deep"}`}>
+      {left < 0 ? `Overdue ${formatDuration(left)}` : `${formatDuration(left)} left`}
+    </span>
+  );
+}
+
 function Person({ s }: { s: SignupRow }) {
   return (
     <Td>
@@ -217,7 +365,7 @@ function Section({ title, sub, children }: { title: string; sub?: string; childr
   return (
     <section className="mt-8">
       <h2 className="heading">
-        {title} {sub && <span className="ml-2 text-sm font-normal text-ink/55">{sub}</span>}
+        {title} {sub && <span className="ml-2 font-sans text-sm font-normal text-ink/55">{sub}</span>}
       </h2>
       {children}
     </section>
@@ -226,7 +374,7 @@ function Section({ title, sub, children }: { title: string; sub?: string; childr
 
 function Table({ head, children }: { head: string[]; children: React.ReactNode }) {
   return (
-    <div className="mt-2 overflow-x-auto border-y border-line">
+    <div className="mt-2 hidden overflow-x-auto border-y border-line sm:block">
       <table className="w-full text-sm">
         <thead className="bg-sheet text-left text-xs uppercase tracking-wide text-ink/55">
           <tr>{head.map((h, i) => <th key={i} className="px-3 py-2 font-bold">{h}</th>)}</tr>
