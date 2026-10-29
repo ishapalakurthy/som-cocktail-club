@@ -27,6 +27,46 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
   const now = requestTime();
   const opensIn = event.opens_at.getTime() - now;
   const slackUrl = `${process.env.APP_URL}/e/${event.slug}`;
+
+  // Partners: each person's pairing label, who they're paired with, and the private link to share
+  // (a partner's link is the student's page, which shows them both).
+  const byId = new Map(all.map((x) => [x.id, x]));
+  const pairs = new Map<string, Pair>(
+    all.map((x) => {
+      const student = x.partner_of ? byId.get(x.partner_of) : undefined;
+      const partner = all.find((y) => y.partner_of === x.id);
+      const other = student ?? partner;
+      const mode = x.together ? "together" : "split OK";
+      return [
+        x.id,
+        {
+          label: student
+            ? `${first(student.name)}'s partner${student.status === "removed" ? " (removed)" : ` · ${mode}`}`
+            : partner
+              ? `with ${partner.name}${partner.status === "removed" ? " (removed)" : ` · ${mode}`}`
+              : null,
+          other: other && other.status !== "removed" ? other : null,
+          together: x.together,
+          link: `${process.env.APP_URL}/s/${(student ?? x).token}`,
+        },
+      ];
+    }),
+  );
+  const pairOf = (x: SignupRow) => pairs.get(x.id)!;
+  // Together pairs are removed and moved up as one, so the confirm text names both.
+  const removeMsg = (x: SignupRow, single: string) => {
+    const o = pairOf(x).other;
+    return o && x.together ? `Remove ${x.name} and ${o.name}? They signed up together.` : single;
+  };
+  const promoteMsg = (x: SignupRow) => {
+    const o = pairOf(x).other;
+    const both = o && x.together && o.status === "waitlist";
+    const need = both ? 2 : 1;
+    const who = both ? `${x.name} and ${o.name}` : x.name;
+    return openSpots < need
+      ? `${both ? "They need 2 spots and there " : "There "}${openSpots === 1 ? "is 1 open spot" : `are ${Math.max(openSpots, 0)} open spots`}. Move ${who} up anyway (over capacity)?`
+      : `Move ${who} into confirmed ${both ? "spots" : "a confirmed spot"}? They'll have 24h to pay.`;
+  };
   const moreActions = (
     <>
       <Link href={`/e/${event.slug}`} target="_blank" className="btn-secondary">View public page</Link>
@@ -125,13 +165,13 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
               {confirmed.map((s, i) => (
                 <tr key={s.id} className="border-t border-line-soft align-top">
                   <Td className="text-ink/40">{i + 1}</Td>
-                  <Person s={s} />
+                  <Person s={s} pair={pairOf(s)} />
                   <Td className="text-xs text-ink/65">{categoryLabel(s.category)}</Td>
                   <Td className="text-xs">{s.dietary}</Td>
                   <Td className="whitespace-nowrap text-xs text-ink/65">{formatTime(s.created_at)}</Td>
                   <Td><Payment s={s} now={now} /></Td>
                   <Td className="text-right">
-                    <ActionButton action={remove.bind(null, s.id)} confirm={`Remove ${s.name}? Their spot will open up.`}>
+                    <ActionButton action={remove.bind(null, s.id)} confirm={removeMsg(s, `Remove ${s.name}? Their spot will open up.`)}>
                       Remove
                     </ActionButton>
                   </Td>
@@ -140,7 +180,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
             </Table>
             <MobileList>
               {confirmed.map((s, i) => (
-                <MobileCard key={s.id} s={s} n={i + 1} right={<PaymentStatus s={s} now={now} />}>
+                <MobileCard key={s.id} s={s} pair={pairOf(s)} n={i + 1} right={<PaymentStatus s={s} now={now} />}>
                   {s.paid ? (
                     <ActionButton action={markPaid.bind(null, s.id, null)} className="mt-2 text-sm text-ink/55 underline">
                       Undo paid
@@ -155,7 +195,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
                   <div>
                     <ActionButton
                       action={remove.bind(null, s.id)}
-                      confirm={`Remove ${s.name}? Their spot will open up.`}
+                      confirm={removeMsg(s, `Remove ${s.name}? Their spot will open up.`)}
                       className="mt-3 text-sm font-bold text-wine"
                     >
                       Remove
@@ -177,7 +217,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
               {waitlist.map((s, i) => (
                 <tr key={s.id} className="border-t border-line-soft align-top">
                   <Td className="text-ink/40">{i + 1}</Td>
-                  <Person s={s} />
+                  <Person s={s} pair={pairOf(s)} />
                   <Td className="text-xs text-ink/65">{categoryLabel(s.category)}</Td>
                   <Td className="text-xs">{s.dietary}</Td>
                   <Td className="whitespace-nowrap text-xs text-ink/65">{formatTime(s.created_at)}</Td>
@@ -185,15 +225,11 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
                     <ActionButton
                       action={promote.bind(null, s.id)}
                       className="btn-primary btn-sm"
-                      confirm={
-                        openSpots <= 0
-                          ? `There are no open spots. Move ${s.name} up anyway (over capacity)?`
-                          : `Move ${s.name} into a confirmed spot? They'll have 24h to pay.`
-                      }
+                      confirm={promoteMsg(s)}
                     >
                       Move up
                     </ActionButton>
-                    <ActionButton action={remove.bind(null, s.id)} confirm={`Remove ${s.name} from the waitlist?`}>
+                    <ActionButton action={remove.bind(null, s.id)} confirm={removeMsg(s, `Remove ${s.name} from the waitlist?`)}>
                       Remove
                     </ActionButton>
                   </Td>
@@ -202,22 +238,18 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
             </Table>
             <MobileList>
               {waitlist.map((s, i) => (
-                <MobileCard key={s.id} s={s} n={i + 1}>
+                <MobileCard key={s.id} s={s} pair={pairOf(s)} n={i + 1}>
                   <div className="mt-3 grid grid-cols-2 gap-2">
                     <ActionButton
                       action={promote.bind(null, s.id)}
                       className="btn-primary py-2.5"
-                      confirm={
-                        openSpots <= 0
-                          ? `There are no open spots. Move ${s.name} up anyway (over capacity)?`
-                          : `Move ${s.name} into a confirmed spot? They'll have 24h to pay.`
-                      }
+                      confirm={promoteMsg(s)}
                     >
                       Move up
                     </ActionButton>
                     <ActionButton
                       action={remove.bind(null, s.id)}
-                      confirm={`Remove ${s.name} from the waitlist?`}
+                      confirm={removeMsg(s, `Remove ${s.name} from the waitlist?`)}
                       className={`${TAP} text-wine`}
                     >
                       Remove
@@ -236,7 +268,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
           <Table head={["Name", "Signed up", "Removed", "By", ""]}>
             {removed.map((s) => (
               <tr key={s.id} className="border-t border-line-soft align-top text-ink/55">
-                <Person s={s} />
+                <Person s={s} pair={pairOf(s)} />
                 <Td className="text-xs">{formatTime(s.created_at)}</Td>
                 <Td className="text-xs">{s.removed_at && formatTime(s.removed_at)}</Td>
                 <Td className="text-xs">{s.removed_by === "self" ? "Themselves" : s.removed_by}</Td>
@@ -256,6 +288,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
               <MobileCard
                 key={s.id}
                 s={s}
+                pair={pairOf(s)}
                 note={`Removed ${s.removed_at ? formatTime(s.removed_at) : ""} by ${s.removed_by === "self" ? "themselves" : s.removed_by}`}
               >
                 <div className="mt-3 grid grid-cols-2 gap-2">
@@ -310,8 +343,9 @@ function MobileList({ children }: { children: React.ReactNode }) {
   return <div className="mt-2 border-t border-line sm:hidden">{children}</div>;
 }
 
-function MobileCard({ s, n, right, note, children }: {
+function MobileCard({ s, pair, n, right, note, children }: {
   s: SignupRow;
+  pair: Pair;
   n?: number;
   right?: React.ReactNode;
   note?: string;
@@ -327,10 +361,12 @@ function MobileCard({ s, n, right, note, children }: {
         {right}
       </div>
       <div className="break-all text-xs text-ink/55">{s.email}</div>
+      {pair.label && <div className="mt-0.5 text-xs font-bold text-gold-deep">{pair.label}</div>}
       <div className="mt-0.5 text-xs text-ink/65">
         {note ?? `${categoryLabel(s.category)} · signed up ${formatTime(s.created_at)}`}
       </div>
       {s.dietary && <div className="mt-0.5 text-xs">Dietary: {s.dietary}</div>}
+      <CopyLink url={pair.link} label="Copy their link" copiedLabel="Copied" className="mt-1 block text-xs text-navy underline" />
       {children}
     </div>
   );
@@ -352,11 +388,19 @@ function PaymentStatus({ s, now }: { s: SignupRow; now: number }) {
   );
 }
 
-function Person({ s }: { s: SignupRow }) {
+type Pair = { label: string | null; other: SignupRow | null; together: boolean; link: string };
+
+function first(name: string) {
+  return name.trim().split(/\s+/)[0];
+}
+
+function Person({ s, pair }: { s: SignupRow; pair: Pair }) {
   return (
     <Td>
       <div className="font-bold">{s.name}</div>
       <div className="text-xs text-ink/55">{s.email}</div>
+      {pair.label && <div className="text-xs font-bold text-gold-deep">{pair.label}</div>}
+      <CopyLink url={pair.link} label="Copy their link" copiedLabel="Copied" className="text-xs text-navy hover:underline" />
     </Td>
   );
 }

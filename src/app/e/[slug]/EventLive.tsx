@@ -132,6 +132,7 @@ function formatCountdown(ms: number) {
 function SignupForm({ slug }: { slug: string }) {
   const [state, action, pending] = useActionState(signUp.bind(null, slug), {});
   const v = state.values ?? {};
+  const [withPartner, setWithPartner] = useState(v.with_partner === "on");
 
   return (
     <form action={action} className="space-y-4 rounded-sm border border-line bg-white p-5 shadow-sm sm:p-7">
@@ -159,6 +160,35 @@ function SignupForm({ slug }: { slug: string }) {
         <label className="label" htmlFor="dietary">Dietary restrictions</label>
         <input id="dietary" name="dietary" className="input" defaultValue={v.dietary} />
       </div>
+      <label className="flex items-center gap-2 text-sm font-bold max-sm:gap-3 max-sm:py-1">
+        <input
+          type="checkbox" name="with_partner" className="accent-navy max-sm:size-5"
+          checked={withPartner} onChange={(e) => setWithPartner(e.target.checked)}
+        />
+        I&apos;m bringing my partner (takes a second spot)
+      </label>
+      {withPartner && (
+        <div className="space-y-4 border-l-2 border-line pl-4">
+          <div>
+            <label className="label" htmlFor="partner_name">Partner&apos;s name *</label>
+            <input id="partner_name" name="partner_name" required className="input" defaultValue={v.partner_name} />
+          </div>
+          <div>
+            <label className="label" htmlFor="partner_dietary">Partner&apos;s dietary restrictions</label>
+            <input id="partner_dietary" name="partner_dietary" className="input" defaultValue={v.partner_dietary} />
+          </div>
+          <label className="flex items-start gap-2 text-sm max-sm:gap-3 max-sm:py-1">
+            <input
+              type="checkbox" name="together" className="mt-0.5 shrink-0 accent-navy max-sm:size-5"
+              defaultChecked={v.with_partner === "on" ? v.together === "on" : true}
+            />
+            <span>
+              Only sign us up if we both get in. Untick this if you&apos;d take a spot alone and have your partner
+              wait on the waitlist.
+            </span>
+          </label>
+        </div>
+      )}
       <fieldset className="space-y-1.5 text-sm">
         <legend className="label">By signing up, you acknowledge: *</legend>
         <Ack name="ack1" checked={v.ack1 === "on"}>I will check this page to confirm whether I have received a spot at the event.</Ack>

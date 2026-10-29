@@ -2,7 +2,17 @@
 
 import { useState } from "react";
 
-export default function CopyLink({ url, className = "btn-primary" }: { url: string; className?: string }) {
+export default function CopyLink({
+  url,
+  className = "btn-primary",
+  label = "Copy Slack link",
+  copiedLabel = "Copied! Paste it in Slack",
+}: {
+  url: string;
+  className?: string;
+  label?: string;
+  copiedLabel?: string;
+}) {
   const [copied, setCopied] = useState(false);
   return (
     <button
@@ -14,7 +24,7 @@ export default function CopyLink({ url, className = "btn-primary" }: { url: stri
         setTimeout(() => setCopied(false), 2000);
       }}
     >
-      {copied ? "Copied! Paste it in Slack" : "Copy Slack link"}
+      {copied ? copiedLabel : label}
     </button>
   );
 }

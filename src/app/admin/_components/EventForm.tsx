@@ -18,6 +18,14 @@ export type EventFormValues = {
   cap_second: string;
 };
 
+// Default unlock: noon (New Haven time) three days before the event, e.g. Sat 7:30 PM -> Wed 12:00 PM.
+function defaultOpensAt(startsAt: string) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T/.exec(startsAt);
+  if (!m) return "";
+  const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3] - 3));
+  return `${d.toISOString().slice(0, 10)}T12:00`;
+}
+
 function slugify(s: string) {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
@@ -29,6 +37,8 @@ export default function EventForm({ eventId, initial }: { eventId: string | null
   const [name, setName] = useState(initial.name);
   const [slug, setSlug] = useState(initial.slug);
   const [slugEdited, setSlugEdited] = useState(Boolean(eventId));
+  const [opensAt, setOpensAt] = useState(v.opens_at);
+  const [opensEdited, setOpensEdited] = useState(Boolean(eventId));
 
   return (
     <form action={action} className="card max-w-2xl space-y-4">
@@ -58,14 +68,25 @@ export default function EventForm({ eventId, initial }: { eventId: string | null
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor="starts_at">Event starts *</label>
-          <input id="starts_at" name="starts_at" type="datetime-local" required className="input" defaultValue={v.starts_at} />
+          <input
+            id="starts_at" name="starts_at" type="datetime-local" required className="input" defaultValue={v.starts_at}
+            onChange={(e) => {
+              if (!opensEdited) setOpensAt(defaultOpensAt(e.target.value));
+            }}
+          />
         </div>
         <div>
           <label className="label" htmlFor="opens_at">Signups unlock at *</label>
-          <input id="opens_at" name="opens_at" type="datetime-local" required className="input" defaultValue={v.opens_at} />
+          <input
+            id="opens_at" name="opens_at" type="datetime-local" required className="input" value={opensAt}
+            onChange={(e) => {
+              setOpensAt(e.target.value);
+              setOpensEdited(true);
+            }}
+          />
         </div>
       </div>
-      <p className="-mt-2 text-xs text-ink/55">Times are New Haven time. Before the unlock time, students see a countdown instead of the form.</p>
+      <p className="-mt-2 text-xs text-ink/55">Times are New Haven time. Signups unlock at noon three days before the event unless you change it. Before then, students see a countdown instead of the form.</p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor="cap_first">{GROUPS.first.label} spots *</label>

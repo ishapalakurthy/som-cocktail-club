@@ -128,7 +128,9 @@ export async function promote(signupId: string) {
 
 export async function remove(signupId: string) {
   const admin = await requireAdmin();
-  await removeSignup(signupId, admin.email);
+  // A together pair leaves as a unit; split pairs are removed one at a time.
+  const s = await getSignup(signupId);
+  await removeSignup(signupId, admin.email, s?.together ?? false);
   revalidatePath("/admin/events/[id]", "page");
 }
 

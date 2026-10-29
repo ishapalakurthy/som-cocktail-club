@@ -50,4 +50,6 @@ export type SignupRow = {
   paid_at: Date | null;
   removed_at: Date | null;
   removed_by: string | null;
+  partner_of: string | null; // set on a partner's row: the student who brought them
+  together: boolean; // pair only gets in (or waits) as a unit
 };

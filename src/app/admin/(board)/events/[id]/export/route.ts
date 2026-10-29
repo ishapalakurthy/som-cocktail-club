@@ -14,9 +14,10 @@ export async function GET(_req: Request, ctx: RouteContext<"/admin/events/[id]/e
     select * from signups where event_id = ${event.id}
     order by group_key, array_position(array['confirmed','waitlist','removed'], status), created_at`;
 
+  const byId = new Map(rows.map((s) => [s.id, s]));
   const cell = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const lines = [
-    ["Group", "Status", "Name", "Email", "Type", "Dietary", "Signed up", "Paid", "Paid via"].map(cell).join(","),
+    ["Group", "Status", "Name", "Email", "Type", "Dietary", "Signed up", "Paid", "Paid via", "Partner of", "Pair"].map(cell).join(","),
     ...rows.map((s) =>
       [
         GROUPS[s.group_key].label,
@@ -28,6 +29,8 @@ export async function GET(_req: Request, ctx: RouteContext<"/admin/events/[id]/e
         formatTime(s.created_at),
         s.paid ? "yes" : "no",
         s.payment_method ?? "",
+        s.partner_of ? byId.get(s.partner_of)?.name : "",
+        s.partner_of || rows.some((r) => r.partner_of === s.id) ? (s.together ? "together" : "split OK") : "",
       ]
         .map(cell)
         .join(","),

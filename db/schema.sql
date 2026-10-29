@@ -53,6 +53,11 @@ create table if not exists signups (
   removed_by     text                           -- 'self' or the admin's email
 );
 
+-- Partner signups: the partner gets their own row (own spot, dietary, payment) linked to the student.
+-- together = true means the pair is only ever confirmed or waitlisted as a unit.
+alter table signups add column if not exists partner_of uuid references signups(id) on delete set null;
+alter table signups add column if not exists together boolean not null default true;
+
 create index if not exists signups_event_idx on signups (event_id, group_key, status, created_at);
 
 -- One active signup per person per event. Partners share an email, so name is part of the key.
