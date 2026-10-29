@@ -156,10 +156,6 @@ function SignupForm({ slug }: { slug: string }) {
           ))}
         </div>
       </fieldset>
-      <div>
-        <label className="label" htmlFor="dietary">Dietary restrictions</label>
-        <input id="dietary" name="dietary" className="input" defaultValue={v.dietary} />
-      </div>
       <label className="flex items-center gap-2 text-sm font-bold max-sm:gap-3 max-sm:py-1">
         <input
           type="checkbox" name="with_partner" className="accent-navy max-sm:size-5"
@@ -189,6 +185,10 @@ function SignupForm({ slug }: { slug: string }) {
           </label>
         </div>
       )}
+      <div>
+        <label className="label" htmlFor="dietary">Dietary restrictions</label>
+        <input id="dietary" name="dietary" className="input" defaultValue={v.dietary} />
+      </div>
       <fieldset className="space-y-1.5 text-sm">
         <legend className="label">By signing up, you acknowledge: *</legend>
         <Ack name="ack1" checked={v.ack1 === "on"}>I will check this page to confirm whether I have received a spot at the event.</Ack>
