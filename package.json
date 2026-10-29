@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "db:setup": "node --env-file=.env.local scripts/db-setup.mjs",
-    "create-admin": "node --env-file=.env.local scripts/create-admin.mjs"
+    "create-admin": "node --env-file=.env.local scripts/create-admin.mjs",
+    "add-live-lead": "node scripts/add-live-lead.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
