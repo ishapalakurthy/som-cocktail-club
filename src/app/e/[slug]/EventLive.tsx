@@ -69,7 +69,7 @@ export default function EventLive(props: {
         })}
       </section>
 
-      <section className="card mt-8">
+      <section className={isOpen && !notYet ? "mt-8" : "card mt-8"}>
         {notYet ? (
           <div className="py-6 text-center">
             <div className="eyebrow">Signups open</div>
@@ -134,7 +134,7 @@ function SignupForm({ slug }: { slug: string }) {
   const v = state.values ?? {};
 
   return (
-    <form action={action} className="space-y-4">
+    <form action={action} className="space-y-4 rounded-sm border border-line bg-white p-5 shadow-sm sm:p-7">
       <h2 className="heading text-center">Reserve Your Spot</h2>
       <div>
         <label className="label" htmlFor="name">Your name *</label>
