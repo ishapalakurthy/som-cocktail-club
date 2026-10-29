@@ -159,7 +159,7 @@ function SignupForm({ slug }: { slug: string }) {
         <label className="label" htmlFor="dietary">Dietary restrictions</label>
         <input id="dietary" name="dietary" className="input" defaultValue={v.dietary} />
       </div>
-      <fieldset className="space-y-1.5 border-y border-line py-3 text-sm">
+      <fieldset className="space-y-1.5 text-sm">
         <legend className="label">By signing up, you acknowledge: *</legend>
         <Ack name="ack1" checked={v.ack1 === "on"}>I will check this page to confirm whether I have received a spot at the event.</Ack>
         <Ack name="ack2" checked={v.ack2 === "on"}>If I get a spot, I will Venmo / Zelle within 24 hours.</Ack>
