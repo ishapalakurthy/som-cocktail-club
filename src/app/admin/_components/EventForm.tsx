@@ -87,7 +87,6 @@ export default function EventForm({ eventId, initial }: { eventId: string | null
           />
         </div>
       </div>
-      <p className="-mt-2 text-xs text-ink/55">Times are New Haven time. Signups unlock at noon three days before the event unless you change it. Before then, students see a countdown instead of the form.</p>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="label" htmlFor="cap_first">{GROUPS.first.label} spots *</label>
