@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { GROUPS } from "@/lib/categories";
+import { formatZelle } from "@/lib/format";
 import { saveEvent } from "../actions";
 
 export type EventFormValues = {
@@ -116,7 +117,10 @@ export default function EventForm({ eventId, initial }: { eventId: string | null
         </div>
         <div>
           <label className="label" htmlFor="zelle_info">Zelle phone/email *</label>
-          <input id="zelle_info" name="zelle_info" required className="input" defaultValue={v.zelle_info} />
+          <input
+            id="zelle_info" name="zelle_info" required className="input" defaultValue={v.zelle_info}
+            onBlur={(e) => (e.target.value = formatZelle(e.target.value))}
+          />
         </div>
       </div>
       {state.error && <p className="text-sm font-bold text-wine">{state.error}</p>}

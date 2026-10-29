@@ -16,6 +16,7 @@ import {
   restoreSignup,
   setPaid,
 } from "@/lib/signups";
+import { formatZelle } from "@/lib/format";
 import { fromLocalInput } from "@/lib/time";
 
 export type FormState = { error?: string; ok?: string; values?: Record<string, string> };
@@ -88,7 +89,7 @@ async function validateAndSaveEvent(eventId: string | null, form: FormData): Pro
     opens_at: fromLocalInput(opensAt),
     price_cents: Math.round(price * 100),
     venmo_handle: get("venmo_handle").replace(/^@/, ""),
-    zelle_info: get("zelle_info"),
+    zelle_info: formatZelle(get("zelle_info")),
     cap_first: capFirst,
     cap_second: capSecond,
   };
