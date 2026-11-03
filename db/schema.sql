@@ -65,7 +65,29 @@ create unique index if not exists signups_one_per_person
   on signups (event_id, lower(email), lower(name))
   where status <> 'removed';
 
+-- Recipe book. A recipe belongs to one of our events, or to a past event that was never in the app
+-- (past_event_name + past_event_date, the first of that month). Drafts are only visible to leads.
+create table if not exists recipes (
+  id              uuid primary key default gen_random_uuid(),
+  slug            text not null unique,
+  name            text not null,
+  description     text not null default '',
+  spirit          text not null,
+  ingredients     jsonb not null default '[]',  -- [{ "amount": "2 oz", "item": "Mezcal" }, ...]
+  method          text not null default '',     -- one step per line
+  glass           text not null default '',
+  garnish         text not null default '',
+  created_by      text not null default '',
+  event_id        uuid references events(id) on delete set null,
+  past_event_name text,
+  past_event_date date,
+  published       boolean not null default false,
+  created_at      timestamptz not null default clock_timestamp(),
+  updated_at      timestamptz not null default now()
+);
+
 -- Nobody but the server (which connects as the database owner) can read these tables.
 alter table admins  enable row level security;
 alter table events  enable row level security;
 alter table signups enable row level security;
+alter table recipes enable row level security;

@@ -14,6 +14,7 @@ export default async function BoardLayout({ children }: LayoutProps<"/admin">) {
             <span className="heading leading-none">SOM Cocktail Club</span>
           </Link>
           <Link href="/admin" className="hidden text-cream/75 hover:text-cream sm:block">Events</Link>
+          <Link href="/admin/recipes" className="hidden text-cream/75 hover:text-cream sm:block">Recipes</Link>
           <Link href="/admin/board" className="hidden text-cream/75 hover:text-cream sm:block">Leads</Link>
           <span className="ml-auto hidden text-cream/60 sm:block">{admin.name}</span>
           <form action={logout} className="hidden sm:block">
@@ -27,6 +28,7 @@ export default async function BoardLayout({ children }: LayoutProps<"/admin">) {
             </summary>
             <div className="absolute right-0 z-20 mt-2 w-48 rounded-sm bg-white py-1 text-base text-ink shadow-lg">
               <Link href="/admin" className="block px-4 py-3 hover:bg-navy/5">Events</Link>
+              <Link href="/admin/recipes" className="block px-4 py-3 hover:bg-navy/5">Recipes</Link>
               <Link href="/admin/board" className="block px-4 py-3 hover:bg-navy/5">Leads</Link>
               <div className="border-t border-navy/10 px-4 pt-3 pb-1 text-sm text-ink/55">{admin.name}</div>
               <form action={logout}>

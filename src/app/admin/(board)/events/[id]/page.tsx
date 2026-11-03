@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { GROUPS, GROUP_KEYS, categoryLabel } from "@/lib/categories";
 import { formatPrice } from "@/lib/format";
 import { sql, type GroupKey, type SignupRow } from "@/lib/db";
+import { recipesForEvent } from "@/lib/recipes";
 import { capacity, getEventById } from "@/lib/signups";
 import { formatDateTime, formatDuration, formatTime, PAYMENT_WINDOW_MS, requestTime } from "@/lib/time";
 import { deleteForever, markPaid, promote, remove, restore, setArchived } from "../../../actions";
@@ -18,6 +19,7 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
   const group: GroupKey = groupParam === "second" ? "second" : "first";
 
   const all = await sql<SignupRow[]>`select * from signups where event_id = ${event.id} order by created_at`;
+  const recipes = await recipesForEvent(event.id);
   const of = (g: GroupKey, status: string) => all.filter((s) => s.group_key === g && s.status === status);
   const confirmed = of(group, "confirmed");
   const waitlist = of(group, "waitlist");
@@ -304,6 +306,28 @@ export default async function RosterPage(props: PageProps<"/admin/events/[id]">)
           </MobileList>
         </details>
       )}
+
+      {/* Recipe book: drinks served at this event. */}
+      <section className="mt-12 border-t border-line pt-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="heading">Cocktails</h2>
+          <Link href={`/admin/recipes/new?event=${event.id}`} className="btn-secondary btn-sm">Add cocktail</Link>
+        </div>
+        {recipes.length === 0 ? (
+          <Empty>No cocktails added yet. After the event, add what you served to the recipe book.</Empty>
+        ) : (
+          <ul className="mt-2 border-t border-line-soft">
+            {recipes.map((r) => (
+              <li key={r.id} className="flex items-center gap-3 border-b border-line-soft py-2 text-sm">
+                <Link href={`/admin/recipes/${r.id}/edit`} className="font-bold hover:underline">{r.name}</Link>
+                {!r.published && (
+                  <span className="rounded-sm bg-gold/15 px-1.5 py-0.5 text-xs font-bold text-gold-deep">Draft</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </>
   );
 }

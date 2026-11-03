@@ -27,6 +27,9 @@ export default async function Home() {
             <span className="text-sm text-ink/70">{formatDateTime(e.starts_at)}</span>
           </Link>
         ))}
+        <Link href="/recipes" className="mt-8 block text-center text-sm text-navy underline underline-offset-4 hover:text-ink">
+          Browse our recipe book
+        </Link>
         <Link href="/admin" className="mt-10 block text-center text-xs text-ink/40 hover:text-ink/70">
           Lead Login
         </Link>
